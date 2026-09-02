@@ -1,0 +1,22 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "types": ["jest"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ],
+  // supabase/ holds one-off Node scripts (run via `tsx`, never bundled into
+  // the app) that need Node's ambient types, not this project's RN/strict
+  // config — they're excluded from the app's typecheck rather than mixing
+  // "types": ["jest", "node"] into every app file.
+  "exclude": ["node_modules", "supabase"]
+}
