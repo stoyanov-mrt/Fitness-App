@@ -5,14 +5,19 @@ import type { BodyMetric, Measurements } from "./types";
 const PROGRESS_PHOTOS_BUCKET = "progress-photos";
 
 export async function listBodyMetrics(userId: string, limit = 90) {
+  // Order descending + limit to actually get the most recent `limit`
+  // entries (an ascending order+limit would return the user's *oldest*
+  // ones instead once they have more than `limit` total), then reverse
+  // back to ascending — every caller (the weight trend chart, the
+  // dashboard's recent-trend widget) expects oldest-of-the-window first.
   const { data, error } = await supabase
     .from("body_metrics")
     .select("*")
     .eq("user_id", userId)
-    .order("date", { ascending: true })
+    .order("date", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return data as BodyMetric[];
+  return (data as BodyMetric[]).reverse();
 }
 
 export async function getLatestBodyMetric(userId: string) {
