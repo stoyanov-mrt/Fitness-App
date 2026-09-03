@@ -145,22 +145,35 @@ export default function DashboardScreen() {
 
         <View className="gap-3 px-6">
           {/* Current streak — a workout and/or a meal logged, counted
-              backward from today (or yesterday if today's still open). */}
+              backward from today (or yesterday if today's still open).
+              A circular badge/emblem rather than plain text — same
+              deliberate-exception-to-sharp-corners precedent as
+              ProgressRing (a "special metric" gets a circular accent,
+              everything else stays square). */}
           <Widget>
-            <View className="flex-row items-baseline justify-between">
-              <View className="flex-row items-baseline gap-2">
-                <ThemedText variant="display" className="text-3xl text-ink">
+            <View className="flex-row items-center gap-4">
+              <View
+                className="h-16 w-16 items-center justify-center rounded-full border-2"
+                style={{
+                  borderColor: streak > 0 ? tokens.swatch.accent : tokens.swatch.border,
+                  backgroundColor: streak > 0 ? tokens.swatch.accent : "transparent",
+                }}
+              >
+                <ThemedText
+                  variant="display"
+                  className={streak > 0 ? "text-xl text-ground" : "text-xl text-ink"}
+                >
                   {streak}
                 </ThemedText>
-                <ThemedText variant="body" className="text-sm text-ink-dim">
-                  day{streak === 1 ? "" : "s"} streak
+              </View>
+              <View className="flex-1 gap-0.5">
+                <ThemedText variant="bodyMedium" className="text-sm text-ink">
+                  {streak === 1 ? "Day Streak" : "Days Streak"}
+                </ThemedText>
+                <ThemedText variant="body" className="text-xs text-ink-dim">
+                  {streak === 0 ? "Log a workout or a meal to start one" : "Keep it going!"}
                 </ThemedText>
               </View>
-              {streak === 0 ? (
-                <ThemedText variant="body" className="text-xs text-ink-dim">
-                  Log a workout or a meal to start one
-                </ThemedText>
-              ) : null}
             </View>
           </Widget>
 
