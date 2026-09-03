@@ -4,7 +4,12 @@ import { ScrollView, View } from "react-native";
 import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
-import { useDeleteRoutine, useRoutine, useStartWorkout } from "@/features/workouts/hooks";
+import {
+  useDeleteRoutine,
+  useDuplicateRoutine,
+  useRoutine,
+  useStartWorkout,
+} from "@/features/workouts/hooks";
 
 export default function RoutineDetailScreen() {
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
@@ -12,6 +17,7 @@ export default function RoutineDetailScreen() {
   const { data: routine, isLoading } = useRoutine(routineId);
   const startWorkout = useStartWorkout(session?.user.id);
   const deleteRoutine = useDeleteRoutine(session?.user.id);
+  const duplicateRoutine = useDuplicateRoutine(session?.user.id);
 
   if (isLoading || !routine) {
     return (
@@ -64,6 +70,25 @@ export default function RoutineDetailScreen() {
           )
         }
       />
+
+      <Button
+        label="Duplicate Routine"
+        variant="secondary"
+        loading={duplicateRoutine.isPending}
+        onPress={() =>
+          duplicateRoutine.mutate(routine.id, {
+            onSuccess: (copy) => router.replace(`/workouts/routines/${copy.id}`),
+          })
+        }
+      />
+
+      {duplicateRoutine.isError ? (
+        <ThemedText variant="body" className="text-sm text-accent">
+          {duplicateRoutine.error instanceof Error
+            ? duplicateRoutine.error.message
+            : "Couldn't duplicate this routine."}
+        </ThemedText>
+      ) : null}
 
       <Button
         label="Delete Routine"

@@ -8,6 +8,7 @@ import {
   createRoutine,
   deleteRoutine,
   deleteSet,
+  duplicateRoutine,
   finishWorkout,
   getExercise,
   getExerciseSetHistory,
@@ -95,6 +96,14 @@ export function useDeleteRoutine(userId: string | undefined) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (routineId: string) => deleteRoutine(routineId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["routines", userId] }),
+  });
+}
+
+export function useDuplicateRoutine(userId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (routineId: string) => duplicateRoutine(userId as string, routineId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["routines", userId] }),
   });
 }

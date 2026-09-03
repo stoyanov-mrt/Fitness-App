@@ -143,6 +143,22 @@ export async function deleteRoutine(routineId: string) {
   if (error) throw error;
 }
 
+/** Copies a routine — name, description, and every exercise's target
+ * sets/reps in the same order — as a starting point to tweak rather than
+ * rebuilding one from scratch. */
+export async function duplicateRoutine(userId: string, routineId: string) {
+  const original = await getRoutine(routineId);
+  return createRoutine(
+    userId,
+    { name: `${original.name} (Copy)`, description: original.description },
+    original.routine_exercises.map((re) => ({
+      exerciseId: re.exercise_id,
+      targetSets: re.target_sets,
+      targetReps: re.target_reps,
+    }))
+  );
+}
+
 // ---- Workout sessions ---------------------------------------------------------
 
 export async function startWorkout(
