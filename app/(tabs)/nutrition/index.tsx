@@ -88,7 +88,9 @@ export default function NutritionScreen() {
       </View>
 
       <Link href="/nutrition/scan" className="text-center text-sm text-ink">
-        <ThemedText variant="bodyMedium">Scan a Barcode</ThemedText>
+        <ThemedText variant="bodyMedium" className="text-ink">
+          Scan a Barcode
+        </ThemedText>
       </Link>
 
       {MEAL_TYPES.map((mealType) => {

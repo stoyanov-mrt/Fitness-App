@@ -1,7 +1,7 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Linking, View } from "react-native";
 
 import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
@@ -21,6 +21,7 @@ export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [foundFood, setFoundFood] = useState<Food | null | undefined>(undefined);
+  const [mountError, setMountError] = useState<string | null>(null);
 
   const barcodeLookup = useBarcodeLookup();
   const addMealItem = useAddMealItem(userId, date);
@@ -50,12 +51,43 @@ export default function ScanScreen() {
   }
 
   if (!permission.granted) {
+    // iOS/Android only ever show the system permission dialog once —
+    // requestPermission() silently no-ops on every call after a denial
+    // (canAskAgain becomes false), which from the user's side looks
+    // exactly like "the button does nothing, no camera ever opens".
+    // Also: on a device that's ever run a *different* Expo project through
+    // Expo Go, a camera denial there carries over here too, since it's
+    // recorded against the Expo Go app itself, not this project — Settings
+    // is the only way out of that once it's happened.
+    if (!permission.canAskAgain) {
+      return (
+        <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">
+          <ThemedText variant="body" className="text-center text-base text-ink-dim">
+            Camera access was denied. Since it can only be requested once,
+            you&apos;ll need to enable it from Settings to scan a barcode.
+          </ThemedText>
+          <Button label="Open Settings" onPress={() => Linking.openSettings()} />
+        </View>
+      );
+    }
+
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">
         <ThemedText variant="body" className="text-center text-base text-ink-dim">
           Camera access is needed to scan barcodes.
         </ThemedText>
         <Button label="Grant Camera Access" onPress={requestPermission} />
+      </View>
+    );
+  }
+
+  if (mountError) {
+    return (
+      <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">
+        <ThemedText variant="body" className="text-center text-base text-ink-dim">
+          Couldn&apos;t start the camera: {mountError}
+        </ThemedText>
+        <Button label="Try Again" onPress={() => setMountError(null)} />
       </View>
     );
   }
@@ -69,6 +101,10 @@ export default function ScanScreen() {
             barcodeTypes: ["ean13", "ean8", "upc_a", "upc_e"],
           }}
           onBarcodeScanned={onBarcodeScanned}
+          // Without this, a native failure to start the camera (in-use by
+          // another app, simulator with no camera, etc.) was a silent
+          // black screen with no feedback at all.
+          onMountError={(event) => setMountError(event.message)}
         />
       ) : (
         <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">

@@ -50,7 +50,9 @@ export default function SignUpScreen() {
           setting up your account.
         </ThemedText>
         <Link href="/sign-in" className="mt-2 text-sm text-ink">
-          <ThemedText variant="bodyMedium">Back to sign in</ThemedText>
+          <ThemedText variant="bodyMedium" className="text-ink">
+            Back to sign in
+          </ThemedText>
         </Link>
       </View>
     );
@@ -127,7 +129,10 @@ export default function SignUpScreen() {
       <Button label="Sign Up" onPress={onSubmit} loading={signUp.isPending} />
 
       <Link href="/sign-in" className="text-center text-sm text-ink-dim">
-        Already have an account? <ThemedText variant="bodyMedium">Sign in</ThemedText>
+        Already have an account?{" "}
+        <ThemedText variant="bodyMedium" className="text-ink">
+          Sign in
+        </ThemedText>
       </Link>
     </ScrollView>
   );

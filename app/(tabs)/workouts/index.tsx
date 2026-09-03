@@ -41,7 +41,9 @@ export default function WorkoutsScreen() {
       />
 
       <Link href="/workouts/exercises" className="text-center text-sm text-ink">
-        <ThemedText variant="bodyMedium">Browse Exercise Library</ThemedText>
+        <ThemedText variant="bodyMedium" className="text-ink">
+          Browse Exercise Library
+        </ThemedText>
       </Link>
 
       <View className="gap-3">
@@ -50,7 +52,9 @@ export default function WorkoutsScreen() {
             Routines
           </ThemedText>
           <Link href="/workouts/routines/new" className="text-sm text-accent">
-            <ThemedText variant="bodyMedium">+ New</ThemedText>
+            <ThemedText variant="bodyMedium" className="text-accent">
+              + New
+            </ThemedText>
           </Link>
         </View>
         {routines && routines.length > 0 ? (

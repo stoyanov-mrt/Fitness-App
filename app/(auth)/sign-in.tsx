@@ -82,7 +82,10 @@ export default function SignInScreen() {
       <Button label="Sign In" onPress={onSubmit} loading={signIn.isPending} />
 
       <Link href="/sign-up" className="text-center text-sm text-ink-dim">
-        Don&apos;t have an account? <ThemedText variant="bodyMedium">Sign up</ThemedText>
+        Don&apos;t have an account?{" "}
+        <ThemedText variant="bodyMedium" className="text-ink">
+          Sign up
+        </ThemedText>
       </Link>
     </ScrollView>
   );
