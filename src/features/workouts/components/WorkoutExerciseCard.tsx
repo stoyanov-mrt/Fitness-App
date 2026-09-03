@@ -112,7 +112,7 @@ export function WorkoutExerciseCard({
             accessibilityRole="checkbox"
             accessibilityState={{ checked: isWarmup }}
             onPress={() => setIsWarmup((w) => !w)}
-            className={`border px-3 py-2.5 ${isWarmup ? "border-ink bg-ink" : "border-border"}`}
+            className={`border-2 px-3 py-2.5 ${isWarmup ? "border-accent bg-accent" : "border-border"}`}
           >
             <ThemedText
               variant="label"

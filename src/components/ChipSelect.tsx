@@ -36,8 +36,11 @@ export function ChipSelect<T extends string>({
               accessibilityRole="radio"
               accessibilityState={{ checked: selected }}
               onPress={() => onChange(option.value)}
-              className={`border px-3.5 py-2 ${
-                selected ? "border-ink bg-ink" : "border-border bg-ground-raised"
+              // The accent color (not just a light/dark swap) so a
+              // selection is unmistakable at a glance, not a subtle tone
+              // shift that's easy to miss.
+              className={`border-2 px-3.5 py-2 ${
+                selected ? "border-accent bg-accent" : "border-border bg-ground-raised"
               }`}
             >
               <ThemedText

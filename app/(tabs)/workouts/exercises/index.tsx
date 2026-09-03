@@ -44,8 +44,8 @@ export default function ExerciseLibraryScreen() {
                 key={c.label}
                 accessibilityRole="button"
                 onPress={() => setCategory(c.value)}
-                className={`border px-3 py-1.5 ${
-                  selected ? "border-ink bg-ink" : "border-border bg-ground-raised"
+                className={`border-2 px-3 py-1.5 ${
+                  selected ? "border-accent bg-accent" : "border-border bg-ground-raised"
                 }`}
               >
                 <ThemedText
