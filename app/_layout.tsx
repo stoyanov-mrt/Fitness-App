@@ -6,14 +6,18 @@ import { StatusBar } from "expo-status-bar";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { ConnectivityBanner } from "@/components/ConnectivityBanner";
 import { useAuthSessionSync } from "@/features/auth/hooks";
-import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { useProtectedRoute } from "@/lib/navigation";
+import { useSyncNetworkStatus } from "@/lib/network";
+import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
+import { Sentry } from "@/lib/sentry";
 import { useSyncNativeWindTheme } from "@/lib/theme";
 
 function RootNavigator() {
   useAuthSessionSync();
   useSyncNativeWindTheme();
+  useSyncNetworkStatus();
   const { isReady } = useProtectedRoute();
 
   if (!isReady) {
@@ -24,10 +28,15 @@ function RootNavigator() {
     );
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <ConnectivityBanner />
+      <Stack screenOptions={{ headerShown: false }} />
+    </>
+  );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <SafeAreaProvider>
       <PersistQueryClientProvider
@@ -40,3 +49,7 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+// A safe no-op when EXPO_PUBLIC_SENTRY_DSN isn't set (see lib/sentry.ts) —
+// adds a top-level error boundary + navigation instrumentation once it is.
+export default Sentry.wrap(RootLayout);

@@ -16,6 +16,8 @@ export function TextField({ label, error, className, ...inputProps }: TextFieldP
       <TextInput
         className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50"
         placeholderTextColor="#9ca3af"
+        accessibilityLabel={label}
+        accessibilityHint={error}
         {...inputProps}
       />
       {error ? <Text className="text-sm text-red-600 dark:text-red-400">{error}</Text> : null}

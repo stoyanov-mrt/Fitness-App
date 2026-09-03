@@ -38,7 +38,9 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to attach progress photos."
         }
-      ]
+      ],
+      "@sentry/react-native",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true

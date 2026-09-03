@@ -19,6 +19,10 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
+      // Explicit, not inferred from children: while loading, the label
+      // Text isn't rendered at all (replaced by the spinner), which would
+      // otherwise leave the button with no accessible name.
+      accessibilityLabel={label}
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
       className={`items-center rounded-lg px-4 py-3 ${

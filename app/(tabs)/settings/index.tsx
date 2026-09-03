@@ -4,7 +4,13 @@ import { ScrollView, Text, View } from "react-native";
 import { Button } from "@/components/Button";
 import { ChipSelect } from "@/components/ChipSelect";
 import { useSession, useSignOut } from "@/features/auth/hooks";
-import { useProfile, useUpdateDisplayPreferences } from "@/features/settings/hooks";
+import {
+  useExportNutritionCsv,
+  useExportWorkoutsCsv,
+  useProfile,
+  useUpdateDisplayPreferences,
+} from "@/features/settings/hooks";
+import { Sentry } from "@/lib/sentry";
 import { useThemeStore, type ThemePreference } from "@/stores/themeStore";
 
 const UNIT_OPTIONS = [
@@ -25,6 +31,8 @@ export default function SettingsScreen() {
   const updateDisplayPreferences = useUpdateDisplayPreferences(userId);
   const setThemePreference = useThemeStore((state) => state.setPreference);
   const signOut = useSignOut();
+  const exportWorkouts = useExportWorkoutsCsv(userId);
+  const exportNutrition = useExportNutritionCsv(userId);
 
   return (
     <ScrollView
@@ -59,12 +67,45 @@ export default function SettingsScreen() {
         }}
       />
 
+      <View className="gap-3">
+        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+          Export Data
+        </Text>
+        <Button
+          label="Export Workout History (CSV)"
+          variant="secondary"
+          onPress={() => exportWorkouts.mutate()}
+          loading={exportWorkouts.isPending}
+        />
+        <Button
+          label="Export Nutrition Diary (CSV)"
+          variant="secondary"
+          onPress={() => exportNutrition.mutate()}
+          loading={exportNutrition.isPending}
+        />
+        {exportWorkouts.isError || exportNutrition.isError ? (
+          <Text className="text-sm text-red-600 dark:text-red-400">
+            Couldn&apos;t export — please try again.
+          </Text>
+        ) : null}
+      </View>
+
       <Button
         label="Sign Out"
         variant="secondary"
         onPress={() => signOut.mutate(undefined, { onSuccess: () => router.replace("/sign-in") })}
         loading={signOut.isPending}
       />
+
+      {__DEV__ ? (
+        <Button
+          label="Trigger Test Error (dev only)"
+          variant="secondary"
+          onPress={() => {
+            Sentry.captureException(new Error("Test error from Settings screen"));
+          }}
+        />
+      ) : null}
     </ScrollView>
   );
 }

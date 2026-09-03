@@ -25,14 +25,14 @@ export function ChipSelect<T extends string>({
       <Text className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
         {label}
       </Text>
-      <View className="flex-row flex-wrap gap-2">
+      <View accessibilityRole="radiogroup" className="flex-row flex-wrap gap-2">
         {options.map((option) => {
           const selected = option.value === value;
           return (
             <Pressable
               key={option.value}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: selected }}
               onPress={() => onChange(option.value)}
               className={`rounded-full border px-3.5 py-2 ${
                 selected
