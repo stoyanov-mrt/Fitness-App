@@ -6,7 +6,13 @@ import { FlatList, Modal, Pressable, ScrollView, TextInput, View } from "react-n
 import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
-import { useAddMealItem, useCreateCustomFood, useFoodSearch } from "@/features/nutrition/hooks";
+import {
+  useAddMealItem,
+  useCreateCustomFood,
+  useFoodSearch,
+  useLogSavedMeal,
+  useSavedMeals,
+} from "@/features/nutrition/hooks";
 import {
   customFoodSchema,
   type CustomFoodFormInput,
@@ -23,7 +29,7 @@ type FoodPickerSheetProps = {
   onClose: () => void;
 };
 
-type Step = "search" | "quantity" | "custom";
+type Step = "search" | "quantity" | "custom" | "saved";
 
 const customFoodDefaults: CustomFoodFormInput = {
   name: "",
@@ -53,6 +59,8 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
   const { data: foods, isLoading } = useFoodSearch(query);
   const addMealItem = useAddMealItem(userId, date);
   const createCustomFood = useCreateCustomFood(userId);
+  const { data: savedMeals, isLoading: savedMealsLoading } = useSavedMeals(userId);
+  const logSavedMeal = useLogSavedMeal(userId, date);
 
   const reset = () => {
     setStep("search");
@@ -155,12 +163,71 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
                 )}
               />
             )}
-            <View className="border-t border-border p-4">
+            <View className="gap-2 border-t border-border p-4">
+              <Button
+                label="Use a saved meal"
+                variant="secondary"
+                onPress={() => setStep("saved")}
+              />
               <Button
                 label="Can't find it? Add a custom food"
                 variant="secondary"
                 onPress={() => setStep("custom")}
               />
+            </View>
+          </>
+        ) : null}
+
+        {step === "saved" ? (
+          <>
+            {savedMealsLoading ? (
+              <ThemedText variant="body" className="px-4 text-ink-dim">
+                Loading...
+              </ThemedText>
+            ) : (
+              <FlatList
+                data={savedMeals ?? []}
+                keyExtractor={(item) => item.id}
+                contentContainerClassName="px-4 pb-4"
+                ListEmptyComponent={
+                  <ThemedText variant="body" className="px-1 py-4 text-ink-dim">
+                    No saved meals yet — save one from the diary after logging it.
+                  </ThemedText>
+                }
+                renderItem={({ item }) => {
+                  const totalCalories = item.saved_meal_items.reduce(
+                    (sum, mealItem) => sum + mealItem.quantity * mealItem.food.calories,
+                    0
+                  );
+                  return (
+                    <Pressable
+                      accessibilityRole="button"
+                      disabled={logSavedMeal.isPending}
+                      onPress={() =>
+                        logSavedMeal.mutate({ mealType, savedMealId: item.id }, { onSuccess: close })
+                      }
+                      className="border-b border-border py-3"
+                    >
+                      <ThemedText variant="bodyMedium" className="text-base text-ink">
+                        {item.name}
+                      </ThemedText>
+                      <ThemedText variant="body" className="text-sm text-ink-dim">
+                        {item.saved_meal_items.length} item
+                        {item.saved_meal_items.length === 1 ? "" : "s"} · {Math.round(totalCalories)}{" "}
+                        kcal
+                      </ThemedText>
+                    </Pressable>
+                  );
+                }}
+              />
+            )}
+            {logSavedMeal.isError ? (
+              <ThemedText variant="body" className="px-4 text-sm text-accent">
+                Couldn&apos;t log that meal.
+              </ThemedText>
+            ) : null}
+            <View className="border-t border-border p-4">
+              <Button label="Back to search" variant="secondary" onPress={() => setStep("search")} />
             </View>
           </>
         ) : null}

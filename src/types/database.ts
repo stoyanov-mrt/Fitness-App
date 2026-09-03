@@ -426,6 +426,71 @@ export type Database = {
           },
         ]
       }
+      saved_meal_items: {
+        Row: {
+          food_id: string
+          id: string
+          quantity: number
+          saved_meal_id: string
+        }
+        Insert: {
+          food_id: string
+          id?: string
+          quantity?: number
+          saved_meal_id: string
+        }
+        Update: {
+          food_id?: string
+          id?: string
+          quantity?: number
+          saved_meal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_meal_items_food_id_fkey"
+            columns: ["food_id"]
+            isOneToOne: false
+            referencedRelation: "foods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_meal_items_saved_meal_id_fkey"
+            columns: ["saved_meal_id"]
+            isOneToOne: false
+            referencedRelation: "saved_meals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_meals: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_meals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sets: {
         Row: {
           completed_at: string

@@ -6,6 +6,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import { FoodPickerSheet } from "@/features/nutrition/components/FoodPickerSheet";
+import { SaveMealModal } from "@/features/nutrition/components/SaveMealModal";
 import { useDailyDiary, useDailySummary, useLatestGoal, useRemoveMealItem } from "@/features/nutrition/hooks";
 import { MEAL_TYPES, type MealType, type MealWithItems } from "@/features/nutrition/types";
 
@@ -35,6 +36,7 @@ export default function NutritionScreen() {
   const removeMealItem = useRemoveMealItem(userId, date);
 
   const [addingMealType, setAddingMealType] = useState<MealType | null>(null);
+  const [savingMealType, setSavingMealType] = useState<MealType | null>(null);
 
   const caloriesConsumed = summary?.total_calories ?? 0;
   const caloriesTarget = goal?.calories_target ?? null;
@@ -145,6 +147,18 @@ export default function NutritionScreen() {
                 </View>
               ))
             )}
+
+            {items.length > 0 ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Save ${MEAL_LABELS[mealType]} as a meal`}
+                onPress={() => setSavingMealType(mealType)}
+              >
+                <ThemedText variant="label" className="text-xs text-ink-dim">
+                  Save as meal
+                </ThemedText>
+              </Pressable>
+            ) : null}
           </View>
         );
       })}
@@ -156,6 +170,18 @@ export default function NutritionScreen() {
           date={date}
           mealType={addingMealType}
           onClose={() => setAddingMealType(null)}
+        />
+      ) : null}
+
+      {savingMealType ? (
+        <SaveMealModal
+          visible
+          userId={userId}
+          items={(mealsByType.get(savingMealType)?.meal_items ?? []).map((item) => ({
+            foodId: item.food_id,
+            quantity: item.quantity,
+          }))}
+          onClose={() => setSavingMealType(null)}
         />
       ) : null}
     </ScrollView>

@@ -5,9 +5,13 @@ import type { Database } from "@/types/database";
 import {
   addMealItem,
   createCustomFood,
+  createSavedMeal,
+  deleteSavedMeal,
   getDailyDiary,
   getDailySummary,
   getLatestGoal,
+  listSavedMeals,
+  logSavedMeal,
   lookupBarcode,
   removeMealItem,
   searchFoods,
@@ -145,5 +149,52 @@ export function useCreateCustomFood(userId: string | undefined) {
 export function useBarcodeLookup() {
   return useMutation({
     mutationFn: (barcode: string) => lookupBarcode(barcode),
+  });
+}
+
+function savedMealsQueryKey(userId: string | undefined) {
+  return ["saved-meals", userId] as const;
+}
+
+export function useSavedMeals(userId: string | undefined) {
+  return useQuery({
+    queryKey: savedMealsQueryKey(userId),
+    queryFn: () => listSavedMeals(userId as string),
+    enabled: !!userId,
+  });
+}
+
+export function useCreateSavedMeal(userId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      name,
+      items,
+    }: {
+      name: string;
+      items: { foodId: string; quantity: number }[];
+    }) => createSavedMeal(userId as string, name, items),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: savedMealsQueryKey(userId) }),
+  });
+}
+
+export function useDeleteSavedMeal(userId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (savedMealId: string) => deleteSavedMeal(savedMealId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: savedMealsQueryKey(userId) }),
+  });
+}
+
+/** Logs every item in a saved meal to a specific date/meal_type at once. */
+export function useLogSavedMeal(userId: string | undefined, date: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ mealType, savedMealId }: { mealType: MealType; savedMealId: string }) =>
+      logSavedMeal(userId as string, date, mealType, savedMealId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: diaryQueryKey(userId, date) });
+      queryClient.invalidateQueries({ queryKey: summaryQueryKey(userId, date) });
+    },
   });
 }

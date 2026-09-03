@@ -1,7 +1,14 @@
 import { supabase } from "@/lib/supabase";
 import type { Database } from "@/types/database";
 
-import type { DailyNutritionSummary, Food, Goal, MealType, MealWithItems } from "./types";
+import type {
+  DailyNutritionSummary,
+  Food,
+  Goal,
+  MealType,
+  MealWithItems,
+  SavedMealWithItems,
+} from "./types";
 
 type FoodInsert = Database["public"]["Tables"]["foods"]["Insert"];
 
@@ -120,6 +127,77 @@ export async function addMealItem(
 export async function removeMealItem(mealItemId: string) {
   const { error } = await supabase.from("meal_items").delete().eq("id", mealItemId);
   if (error) throw error;
+}
+
+// ---- Saved meals ----------------------------------------------------------------
+// A reusable bundle of foods + quantities (e.g. "my usual breakfast") a user
+// logs to their diary in one action. Not tied to a date/meal_type itself —
+// logSavedMeal below creates real meal_items rows via the same ensureMeal
+// path addMealItem uses.
+
+export async function listSavedMeals(userId: string): Promise<SavedMealWithItems[]> {
+  const { data, error } = await supabase
+    .from("saved_meals")
+    .select("*, saved_meal_items(*, food:foods(*))")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as unknown as SavedMealWithItems[];
+}
+
+export async function createSavedMeal(
+  userId: string,
+  name: string,
+  items: { foodId: string; quantity: number }[]
+) {
+  const { data: savedMeal, error } = await supabase
+    .from("saved_meals")
+    .insert({ user_id: userId, name })
+    .select("*")
+    .single();
+  if (error) throw error;
+
+  if (items.length > 0) {
+    const rows = items.map((item) => ({
+      saved_meal_id: savedMeal.id,
+      food_id: item.foodId,
+      quantity: item.quantity,
+    }));
+    const { error: itemsError } = await supabase.from("saved_meal_items").insert(rows);
+    if (itemsError) throw itemsError;
+  }
+
+  return savedMeal;
+}
+
+export async function deleteSavedMeal(savedMealId: string) {
+  const { error } = await supabase.from("saved_meals").delete().eq("id", savedMealId);
+  if (error) throw error;
+}
+
+/** Logs every item in a saved meal to the given date/meal_type in one go. */
+export async function logSavedMeal(
+  userId: string,
+  date: string,
+  mealType: MealType,
+  savedMealId: string
+) {
+  const { data: items, error: itemsError } = await supabase
+    .from("saved_meal_items")
+    .select("food_id, quantity")
+    .eq("saved_meal_id", savedMealId);
+  if (itemsError) throw itemsError;
+  if (!items || items.length === 0) return [];
+
+  const meal = await ensureMeal(userId, date, mealType);
+  const rows = items.map((item) => ({
+    meal_id: meal.id,
+    food_id: item.food_id,
+    quantity: item.quantity,
+  }));
+  const { data, error } = await supabase.from("meal_items").insert(rows).select("*, food:foods(*)");
+  if (error) throw error;
+  return data;
 }
 
 // ---- Goals (read-only here; created during onboarding) ------------------------

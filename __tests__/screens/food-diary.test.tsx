@@ -33,6 +33,8 @@ jest.mock("@/features/nutrition/hooks", () => ({
   useFoodSearch: () => ({ data: [], isLoading: false }),
   useAddMealItem: () => ({ mutate: mockAddMealItemMutate, isPending: false }),
   useCreateCustomFood: () => ({ mutate: mockCreateCustomFoodMutate, isPending: false }),
+  useSavedMeals: () => ({ data: [], isLoading: false }),
+  useLogSavedMeal: () => ({ mutate: jest.fn(), isPending: false, isError: false }),
 }));
 
 it("adds a custom food to today's breakfast", async () => {
