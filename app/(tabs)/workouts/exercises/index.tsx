@@ -108,7 +108,7 @@ export default function ExerciseLibraryScreen() {
               </ThemedText>
             </Pressable>
           </View>
-          <ScrollView contentContainerClassName="gap-4 px-4 pb-8">
+          <ScrollView contentContainerClassName="gap-4 px-4 pb-8" keyboardShouldPersistTaps="handled">
             <CustomExerciseForm
               userId={session?.user.id}
               onSaved={(exercise) => {

@@ -89,6 +89,7 @@ export default function MetricsScreen() {
       className="flex-1 bg-ground"
       contentContainerClassName="gap-6 px-6 pt-16"
       contentContainerStyle={{ paddingBottom: tabBarClearance }}
+      keyboardShouldPersistTaps="handled"
     >
       <ThemedText variant="display" className="text-3xl text-ink">
         Body Metrics

@@ -118,7 +118,7 @@ export function ExercisePickerSheet({
         ) : null}
 
         {step === "custom" ? (
-          <ScrollView contentContainerClassName="gap-4 px-4 pb-8">
+          <ScrollView contentContainerClassName="gap-4 px-4 pb-8" keyboardShouldPersistTaps="handled">
             <CustomExerciseForm
               userId={userId}
               submitLabel="Save & add to workout"

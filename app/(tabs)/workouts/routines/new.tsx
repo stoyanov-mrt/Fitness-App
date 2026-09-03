@@ -41,7 +41,11 @@ export default function NewRoutineScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-6">
+    <ScrollView
+      className="flex-1 bg-ground"
+      contentContainerClassName="gap-6 px-6 py-6"
+      keyboardShouldPersistTaps="handled"
+    >
       <View className="gap-4">
         <TextField
           label="Name"

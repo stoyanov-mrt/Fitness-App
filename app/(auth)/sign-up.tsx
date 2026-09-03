@@ -62,6 +62,7 @@ export default function SignUpScreen() {
     <ScrollView
       className="flex-1 bg-ground"
       contentContainerClassName="flex-1 justify-center gap-6 px-6 py-12"
+      keyboardShouldPersistTaps="handled"
     >
       <View className="gap-1">
         <ThemedText variant="display" className="text-3xl text-ink">

@@ -262,7 +262,7 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
         ) : null}
 
         {step === "custom" ? (
-          <ScrollView contentContainerClassName="gap-4 px-4 pb-8">
+          <ScrollView contentContainerClassName="gap-4 px-4 pb-8" keyboardShouldPersistTaps="handled">
             <ThemedText variant="body" className="text-sm text-ink-dim">
               Values are per 100 g / 100 ml.
             </ThemedText>

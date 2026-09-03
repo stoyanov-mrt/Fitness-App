@@ -40,7 +40,7 @@ export default function WorkoutSessionScreen() {
 
   return (
     <View className="flex-1 bg-ground">
-      <ScrollView contentContainerClassName="gap-4 px-6 py-6">
+      <ScrollView contentContainerClassName="gap-4 px-6 py-6" keyboardShouldPersistTaps="handled">
         <ThemedText variant="display" className="text-3xl text-ink">
           {workout.name}
         </ThemedText>

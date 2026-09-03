@@ -72,7 +72,11 @@ export default function OnboardingScreen() {
   return (
     <View className="flex-1 bg-ground">
       <GrainOverlay />
-      <ScrollView contentContainerClassName="gap-8 px-6 py-16" contentContainerStyle={{ maxWidth: 640 }}>
+      <ScrollView
+        contentContainerClassName="gap-8 px-6 py-16"
+        contentContainerStyle={{ maxWidth: 640 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="flex-row items-start gap-5">
           <View className="w-20 shrink-0 opacity-90">
             <MonumentalImage />
