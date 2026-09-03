@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 
+import { HeaderBackButton } from "@/components/HeaderBackButton";
 import { useDesignTheme } from "@/theme/useDesignTheme";
 
 // Workouts is the one tab with a nested navigation tree (library, routines,
@@ -15,6 +16,9 @@ export default function WorkoutsLayout() {
         headerShadowVisible: false,
         headerTintColor: tokens.swatch.ink,
         headerTitleStyle: { fontFamily: tokens.fonts.bodyMedium, color: tokens.swatch.ink },
+        // Explicit rather than relying on the native stack's automatic
+        // back button — reported missing on a real device.
+        headerLeft: () => <HeaderBackButton fallbackHref="/workouts" />,
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
