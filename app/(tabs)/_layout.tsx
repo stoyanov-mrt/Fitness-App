@@ -20,6 +20,15 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        // React Navigation's default tab item layout is
+        // justifyContent:'flex-start' (it assumes a label sits below the
+        // icon) — with the label hidden, the icon was pinned near the top
+        // of the pill instead of centered. Auto margins absorb the leftover
+        // space evenly above/below regardless of the parent's
+        // justifyContent, which is the reliable fix (confirmed against
+        // expo-router's vendored BottomTabItem/TabBarIcon source, not just
+        // guessed).
+        tabBarIconStyle: { marginTop: "auto", marginBottom: "auto" },
         tabBarActiveTintColor: tokens.swatch.ink,
         tabBarInactiveTintColor: tokens.swatch.inkDim,
         tabBarStyle: {
