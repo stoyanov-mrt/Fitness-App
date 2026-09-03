@@ -13,6 +13,7 @@ type RoutineExerciseInsert = Database["public"]["Tables"]["routine_exercises"]["
 type WorkoutInsert = Database["public"]["Tables"]["workouts"]["Insert"];
 type SetInsert = Database["public"]["Tables"]["sets"]["Insert"];
 type SetUpdate = Database["public"]["Tables"]["sets"]["Update"];
+type ExerciseInsert = Database["public"]["Tables"]["exercises"]["Insert"];
 
 // ---- Exercise library -----------------------------------------------------
 
@@ -23,6 +24,34 @@ export async function searchExercises(query: string, category?: string) {
   const { data, error } = await request.limit(100);
   if (error) throw error;
   return data as Exercise[];
+}
+
+export async function createCustomExercise(
+  userId: string,
+  exercise: { name: string; category: string; primaryMuscle: string; equipment: string }
+) {
+  // exercises.slug is unique across every user's rows (seeded + custom
+  // alike), so a name-derived slug needs a disambiguating suffix — two
+  // people (or one person twice) naming an exercise "Cable Fly" shouldn't
+  // collide.
+  const slug = `${exercise.name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")}-${Date.now().toString(36)}`;
+
+  const insert: ExerciseInsert = {
+    slug,
+    name: exercise.name,
+    category: exercise.category,
+    primary_muscle: exercise.primaryMuscle,
+    equipment: exercise.equipment,
+    is_custom: true,
+    created_by: userId,
+  };
+  const { data, error } = await supabase.from("exercises").insert(insert).select("*").single();
+  if (error) throw error;
+  return data as Exercise;
 }
 
 export async function getExercise(exerciseId: string) {

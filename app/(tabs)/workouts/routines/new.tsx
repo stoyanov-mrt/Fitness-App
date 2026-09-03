@@ -130,6 +130,7 @@ export default function NewRoutineScreen() {
 
       <ExercisePickerSheet
         visible={pickerVisible}
+        userId={session?.user.id}
         onClose={() => setPickerVisible(false)}
         onSelect={(exercise) => {
           setDraftExercises((prev) => [...prev, { exercise, targetSets: "3", targetReps: "8-12" }]);

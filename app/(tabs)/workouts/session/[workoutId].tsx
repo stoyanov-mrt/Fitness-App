@@ -95,6 +95,7 @@ export default function WorkoutSessionScreen() {
 
       <ExercisePickerSheet
         visible={pickerVisible}
+        userId={session?.user.id}
         onClose={() => setPickerVisible(false)}
         excludeExerciseIds={sortedExercises.map((we) => we.exercise.id)}
         onSelect={(exercise) => {

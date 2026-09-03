@@ -43,6 +43,7 @@ jest.mock("@/features/workouts/hooks", () => ({
   useFinishWorkout: () => ({ mutate: mockFinishWorkoutMutate, isPending: false }),
   useLogSet: () => ({ mutate: mockLogSetMutate, isPending: false }),
   useExerciseSearch: () => ({ data: [], isLoading: false }),
+  useCreateCustomExercise: () => ({ mutate: jest.fn(), isPending: false, isError: false }),
 }));
 
 it("logs a set for an exercise in the active workout", async () => {

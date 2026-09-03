@@ -4,6 +4,7 @@ import type { Database } from "@/types/database";
 
 import {
   addExerciseToWorkout,
+  createCustomExercise,
   createRoutine,
   deleteRoutine,
   deleteSet,
@@ -28,6 +29,19 @@ export function useExerciseSearch(query: string, category?: string) {
   return useQuery({
     queryKey: ["exercises", "search", query, category ?? null],
     queryFn: () => searchExercises(query, category),
+  });
+}
+
+export function useCreateCustomExercise(userId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (exercise: {
+      name: string;
+      category: string;
+      primaryMuscle: string;
+      equipment: string;
+    }) => createCustomExercise(userId as string, exercise),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["exercises"] }),
   });
 }
 
