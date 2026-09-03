@@ -39,6 +39,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      body_metrics: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          measurements: Json | null
+          photo_urls: string[]
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          measurements?: Json | null
+          photo_urls?: string[]
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          measurements?: Json | null
+          photo_urls?: string[]
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "body_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises: {
         Row: {
           category: string

@@ -32,6 +32,12 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to use the camera to scan food barcodes."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to attach progress photos."
+        }
       ]
     ],
     "experiments": {
