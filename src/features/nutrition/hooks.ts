@@ -10,6 +10,7 @@ import {
   getDailyDiary,
   getDailySummary,
   getLatestGoal,
+  listLoggedMealDates,
   listSavedMeals,
   logSavedMeal,
   lookupBarcode,
@@ -46,6 +47,16 @@ export function useDailySummary(userId: string | undefined, date: string) {
   return useQuery({
     queryKey: summaryQueryKey(userId, date),
     queryFn: () => getDailySummary(userId as string, date),
+    enabled: !!userId,
+  });
+}
+
+/** Distinct dates with a logged meal since `sinceDate` — feeds the
+ * dashboard's activity streak alongside workout history. */
+export function useLoggedMealDates(userId: string | undefined, sinceDate: string) {
+  return useQuery({
+    queryKey: ["logged-meal-dates", userId, sinceDate],
+    queryFn: () => listLoggedMealDates(userId as string, sinceDate),
     enabled: !!userId,
   });
 }

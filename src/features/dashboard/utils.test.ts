@@ -1,4 +1,5 @@
 import {
+  computeStreak,
   lastSevenDays,
   toDateKey,
   weightTrend,
@@ -61,5 +62,33 @@ describe("weightTrend", () => {
 
   it("computes the change from the oldest entry in the window to the latest weight", () => {
     expect(weightTrend([{ weight_kg: 79 }, { weight_kg: 80 }], 80.5)).toBeCloseTo(1.5);
+  });
+});
+
+describe("computeStreak", () => {
+  const reference = new Date("2026-09-10T12:00:00");
+
+  it("counts consecutive days ending today, when today is active", () => {
+    const active = new Set(["2026-09-10", "2026-09-09", "2026-09-08"]);
+    expect(computeStreak(active, reference)).toBe(3);
+  });
+
+  it("stays alive through today when today has nothing logged yet, counting from yesterday", () => {
+    const active = new Set(["2026-09-09", "2026-09-08"]);
+    expect(computeStreak(active, reference)).toBe(2);
+  });
+
+  it("stops at the first gap", () => {
+    const active = new Set(["2026-09-10", "2026-09-09", "2026-09-07"]); // gap on the 8th
+    expect(computeStreak(active, reference)).toBe(2);
+  });
+
+  it("returns 0 when neither today nor yesterday has anything", () => {
+    const active = new Set(["2026-09-01"]);
+    expect(computeStreak(active, reference)).toBe(0);
+  });
+
+  it("returns 0 for an empty set", () => {
+    expect(computeStreak(new Set(), reference)).toBe(0);
   });
 });

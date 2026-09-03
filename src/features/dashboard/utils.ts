@@ -50,3 +50,25 @@ export function weightTrend(
   if (oldest == null) return null;
   return latestWeightKg - oldest;
 }
+
+/**
+ * Current activity streak: consecutive days, counting backward, with a
+ * workout and/or a food log. Doesn't break just because *today* has no
+ * activity yet — a streak stays "alive" through today until the day
+ * actually ends without anything logged, so it starts counting from
+ * yesterday instead when today is empty (same convention as Duolingo-style
+ * streak counters). Returns 0 when even yesterday has nothing.
+ */
+export function computeStreak(activeDateKeys: Set<string>, referenceDate = new Date()): number {
+  const cursor = new Date(referenceDate);
+  if (!activeDateKeys.has(toDateKey(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  let streak = 0;
+  while (activeDateKeys.has(toDateKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}

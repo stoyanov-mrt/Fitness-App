@@ -87,6 +87,24 @@ export async function getDailySummary(
   return data;
 }
 
+/** Every distinct date (on or after `sinceDate`) with at least one meal
+ * *item* logged — used for the dashboard's activity streak. The `!inner`
+ * join is required, not just an optimization: a `meals` row can exist with
+ * zero items (removeMealItem doesn't clean up an emptied parent, and the
+ * food diary screen already renders that as an empty, ordinary state), so
+ * a plain select on `meals` would count a date as "logged" even after the
+ * user deleted everything they added to it. Same pattern as
+ * workout_exercises!inner in workouts/api.ts's getExerciseSetHistory. */
+export async function listLoggedMealDates(userId: string, sinceDate: string) {
+  const { data, error } = await supabase
+    .from("meals")
+    .select("date, meal_items!inner(id)")
+    .eq("user_id", userId)
+    .gte("date", sinceDate);
+  if (error) throw error;
+  return [...new Set(data.map((m) => m.date))];
+}
+
 async function ensureMeal(userId: string, date: string, mealType: MealType) {
   const { data: existing, error: existingError } = await supabase
     .from("meals")

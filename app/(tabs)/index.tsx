@@ -10,6 +10,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import {
+  computeStreak,
   lastSevenDays,
   toDateKey,
   weightTrend as computeWeightTrend,
@@ -18,7 +19,7 @@ import {
 } from "@/features/dashboard/utils";
 import { useBodyMetrics, useLatestBodyMetric } from "@/features/metrics/hooks";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
-import { useDailySummary, useLatestGoal } from "@/features/nutrition/hooks";
+import { useDailySummary, useLatestGoal, useLoggedMealDates } from "@/features/nutrition/hooks";
 import { useWorkoutHistory } from "@/features/workouts/hooks";
 import { useDesignTheme } from "@/theme/useDesignTheme";
 
@@ -36,6 +37,16 @@ function formatDate(value: string) {
 
 function round(value: number) {
   return Math.round(value);
+}
+
+// How far back to look for streak purposes — plenty for any believable
+// streak, cheap enough to query in full rather than needing pagination.
+const STREAK_WINDOW_DAYS = 60;
+
+function daysAgoDateKey(days: number) {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return toDateKey(d);
 }
 
 // Every piece of the dashboard is its own self-contained tile now (per
@@ -82,6 +93,7 @@ export default function DashboardScreen() {
   const { data: workoutHistory } = useWorkoutHistory(userId);
   const { data: bodyMetrics } = useBodyMetrics(userId, 14);
   const { data: latestBodyMetric } = useLatestBodyMetric(userId);
+  const { data: loggedMealDates } = useLoggedMealDates(userId, daysAgoDateKey(STREAK_WINDOW_DAYS));
 
   const caloriesConsumed = summary?.total_calories ?? 0;
   const caloriesTarget = goal?.calories_target ?? 0;
@@ -94,6 +106,15 @@ export default function DashboardScreen() {
   const week = lastSevenDays();
   const workoutDays = workoutDayKeys(workoutHistory ?? []);
   const weightTrend = computeWeightTrend(bodyMetrics ?? [], latestBodyMetric?.weight_kg);
+
+  // Active on a given day = a workout and/or a meal logged that day.
+  // Known limitation: useWorkoutHistory caps at the 50 most recent
+  // *finished* workouts (listWorkoutHistory has no pagination), so the
+  // workout half of this could undercount for a user averaging more than
+  // ~1.2 finished workouts/day across the whole STREAK_WINDOW_DAYS window
+  // — an unusually high logging frequency, not worth paginating for now.
+  const activeDays = new Set([...workoutDays, ...(loggedMealDates ?? [])]);
+  const streak = computeStreak(activeDays);
 
   const macros = [
     { label: "Protein", value: summary?.total_protein_g, target: goal?.protein_g_target },
@@ -123,6 +144,26 @@ export default function DashboardScreen() {
         </View>
 
         <View className="gap-3 px-6">
+          {/* Current streak — a workout and/or a meal logged, counted
+              backward from today (or yesterday if today's still open). */}
+          <Widget>
+            <View className="flex-row items-baseline justify-between">
+              <View className="flex-row items-baseline gap-2">
+                <ThemedText variant="display" className="text-3xl text-ink">
+                  {streak}
+                </ThemedText>
+                <ThemedText variant="body" className="text-sm text-ink-dim">
+                  day{streak === 1 ? "" : "s"} streak
+                </ThemedText>
+              </View>
+              {streak === 0 ? (
+                <ThemedText variant="body" className="text-xs text-ink-dim">
+                  Log a workout or a meal to start one
+                </ThemedText>
+              ) : null}
+            </View>
+          </Widget>
+
           {/* Week strip — today and which of the last 7 days had a logged
               workout, at a glance. */}
           <Widget>
