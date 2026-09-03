@@ -37,6 +37,18 @@ export default function TabsLayout() {
           right: 20,
           bottom: insets.bottom + TAB_BAR_BOTTOM_MARGIN,
           height: TAB_BAR_HEIGHT,
+          // React Navigation's BottomTabBar always applies
+          // paddingBottom: insets.bottom by default (it assumes a bar
+          // docked flush to the screen edge, needing padding to clear the
+          // home indicator/gesture bar). Our bar already floats clear of
+          // that via the `bottom` offset above, so on any device with a
+          // non-zero bottom inset (any iPhone with Face ID) that default
+          // padding was invisible on web (inset 0) but on a real phone ate
+          // over half the pill's height, squashing the icon toward the
+          // top — the actual cause of the "icons aren't centered" report,
+          // on top of (not instead of) the tabBarIconStyle fix below.
+          paddingBottom: 0,
+          paddingTop: 0,
           borderRadius: TAB_BAR_HEIGHT / 2,
           borderWidth: 1,
           borderColor: tokens.swatch.border,
