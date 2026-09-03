@@ -31,9 +31,9 @@ type ThemeTokens = {
   labelTracking: number;
   progressRing: { color: string; track: string };
   /** Small swatch used by the theme selector UI, and by components (e.g.
-   * SVG fills, placeholder text) that need a raw color value rather than a
-   * className. */
-  swatch: { ground: string; ink: string; inkDim: string; accent: string };
+   * SVG fills, placeholder text, React Navigation's screenOptions) that
+   * need a raw color value rather than a className. */
+  swatch: { ground: string; ink: string; inkDim: string; border: string; accent: string };
 };
 
 export const designThemes: Record<DesignTheme, ThemeTokens> = {
@@ -48,7 +48,6 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
       "--color-ink-dim": "#8c8a85",
       "--color-border": "#2c2b28",
       "--color-accent": "#ff7a29",
-      "--color-accent-ink": "#0a0a0a",
     }),
     fonts: {
       display: "JetBrainsMono_700Bold",
@@ -59,7 +58,13 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
     },
     labelTracking: 2,
     progressRing: { color: "#ff7a29", track: "#2c2b28" },
-    swatch: { ground: "#0a0a0a", ink: "#e8e6e1", inkDim: "#8c8a85", accent: "#ff7a29" },
+    swatch: {
+      ground: "#0a0a0a",
+      ink: "#e8e6e1",
+      inkDim: "#8c8a85",
+      border: "#2c2b28",
+      accent: "#ff7a29",
+    },
   },
   japanese: {
     theme: "japanese",
@@ -72,7 +77,6 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
       "--color-ink-dim": "#6b655a",
       "--color-border": "#ddd4c1",
       "--color-accent": "#b8452f",
-      "--color-accent-ink": "#f5f1e8",
     }),
     fonts: {
       display: "ShipporiMincho_700Bold",
@@ -83,7 +87,13 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
     },
     labelTracking: 1.5,
     progressRing: { color: "#b8452f", track: "#ddd4c1" },
-    swatch: { ground: "#f5f1e8", ink: "#1c1a17", inkDim: "#6b655a", accent: "#b8452f" },
+    swatch: {
+      ground: "#f5f1e8",
+      ink: "#1c1a17",
+      inkDim: "#6b655a",
+      border: "#ddd4c1",
+      accent: "#b8452f",
+    },
   },
 };
 

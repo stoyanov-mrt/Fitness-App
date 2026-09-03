@@ -20,7 +20,6 @@ module.exports = {
         "ink-dim": "var(--color-ink-dim)",
         border: "var(--color-border)",
         accent: "var(--color-accent)",
-        "accent-ink": "var(--color-accent-ink)",
       },
     },
   },

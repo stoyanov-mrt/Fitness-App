@@ -13,7 +13,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: tokens.swatch.inkDim,
         tabBarStyle: {
           backgroundColor: tokens.swatch.ground,
-          borderTopColor: tokens.swatch.inkDim,
+          borderTopColor: tokens.swatch.border,
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {

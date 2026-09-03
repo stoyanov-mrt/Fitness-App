@@ -48,9 +48,14 @@ function RootLayout() {
   const { theme, tokens } = useDesignTheme();
 
   if (!fontsLoaded) {
+    // Not yet inside the vars() wrapper below, so bg-ground has no CSS
+    // variable to resolve against here — set the ground color directly to
+    // avoid a white flash before Dither Mono's near-black ground appears.
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator />
+      <View
+        style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: tokens.swatch.ground }}
+      >
+        <ActivityIndicator color={tokens.swatch.ink} />
       </View>
     );
   }

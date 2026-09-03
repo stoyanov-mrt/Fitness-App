@@ -1,11 +1,13 @@
+import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
+
+import { useDesignThemeStore } from "@/stores/designThemeStore";
+
 // The store persists to AsyncStorage (see designThemeStore.ts); its native
 // module isn't available under Jest, so swap in the package's own mock —
 // same fix documented at https://react-native-async-storage.github.io/async-storage/docs/advanced/jest
-jest.mock("@react-native-async-storage/async-storage", () =>
-  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
-
-import { useDesignThemeStore } from "@/stores/designThemeStore";
+// (jest.mock calls are hoisted above imports by babel-jest, so this runs
+// before designThemeStore.ts's own import of the real module resolves).
+jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
 describe("designThemeStore", () => {
   it("defaults to the dither theme", () => {
