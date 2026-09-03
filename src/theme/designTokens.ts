@@ -33,7 +33,14 @@ type ThemeTokens = {
   /** Small swatch used by the theme selector UI, and by components (e.g.
    * SVG fills, placeholder text, React Navigation's screenOptions) that
    * need a raw color value rather than a className. */
-  swatch: { ground: string; ink: string; inkDim: string; border: string; accent: string };
+  swatch: {
+    ground: string;
+    groundRaised: string;
+    ink: string;
+    inkDim: string;
+    border: string;
+    accent: string;
+  };
 };
 
 export const designThemes: Record<DesignTheme, ThemeTokens> = {
@@ -60,6 +67,7 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
     progressRing: { color: "#ff7a29", track: "#2c2b28" },
     swatch: {
       ground: "#0a0a0a",
+      groundRaised: "#161614",
       ink: "#e8e6e1",
       inkDim: "#8c8a85",
       border: "#2c2b28",
@@ -89,6 +97,7 @@ export const designThemes: Record<DesignTheme, ThemeTokens> = {
     progressRing: { color: "#b8452f", track: "#ddd4c1" },
     swatch: {
       ground: "#f5f1e8",
+      groundRaised: "#efe9db",
       ink: "#1c1a17",
       inkDim: "#6b655a",
       border: "#ddd4c1",

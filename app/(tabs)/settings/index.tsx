@@ -6,6 +6,7 @@ import { ChipSelect } from "@/components/ChipSelect";
 import { GrainOverlay } from "@/components/decor/GrainOverlay";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemeSelector } from "@/components/ThemeSelector";
+import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession, useSignOut } from "@/features/auth/hooks";
 import {
   useExportNutritionCsv,
@@ -44,11 +45,15 @@ export default function SettingsScreen() {
   const signOut = useSignOut();
   const exportWorkouts = useExportWorkoutsCsv(userId);
   const exportNutrition = useExportNutritionCsv(userId);
+  const tabBarClearance = useTabBarContentClearance();
 
   return (
     <View className="flex-1 bg-ground">
       <GrainOverlay />
-      <ScrollView contentContainerClassName="gap-8 px-6 py-16" contentContainerStyle={{ maxWidth: 640 }}>
+      <ScrollView
+        contentContainerClassName="gap-8 px-6 pt-16"
+        contentContainerStyle={{ maxWidth: 640, paddingBottom: tabBarClearance }}
+      >
         <View className="gap-1">
           <ThemedText variant="display" className="text-4xl text-ink">
             Settings

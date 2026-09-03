@@ -3,6 +3,7 @@ import { Pressable, ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
+import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import { useRoutines, useStartWorkout, useWorkoutHistory } from "@/features/workouts/hooks";
 
@@ -16,9 +17,14 @@ export default function WorkoutsScreen() {
   const { data: routines } = useRoutines(userId);
   const { data: history } = useWorkoutHistory(userId);
   const startWorkout = useStartWorkout(userId);
+  const tabBarClearance = useTabBarContentClearance();
 
   return (
-    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-16">
+    <ScrollView
+      className="flex-1 bg-ground"
+      contentContainerClassName="gap-6 px-6 pt-16"
+      contentContainerStyle={{ paddingBottom: tabBarClearance }}
+    >
       <ThemedText variant="display" className="text-3xl text-ink">
         Workouts
       </ThemedText>

@@ -6,6 +6,7 @@ import { ScrollView, View } from "react-native";
 import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
+import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import { ProgressPhotoThumbnail } from "@/features/metrics/components/ProgressPhotoThumbnail";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
@@ -78,8 +79,14 @@ export default function MetricsScreen() {
     uploadPhoto.mutate({ date, localUri: result.assets[0].uri });
   };
 
+  const tabBarClearance = useTabBarContentClearance();
+
   return (
-    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-16">
+    <ScrollView
+      className="flex-1 bg-ground"
+      contentContainerClassName="gap-6 px-6 pt-16"
+      contentContainerStyle={{ paddingBottom: tabBarClearance }}
+    >
       <ThemedText variant="display" className="text-3xl text-ink">
         Body Metrics
       </ThemedText>

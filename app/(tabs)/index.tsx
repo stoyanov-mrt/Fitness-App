@@ -6,6 +6,7 @@ import { GrainOverlay } from "@/components/decor/GrainOverlay";
 import { MonumentalImage } from "@/components/decor/MonumentalImage";
 import { ProgressRing } from "@/components/ProgressRing";
 import { ThemedText } from "@/components/ThemedText";
+import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import { useBodyMetrics, useLatestBodyMetric } from "@/features/metrics/hooks";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
@@ -55,11 +56,12 @@ export default function DashboardScreen() {
   const caloriesRemaining = caloriesTarget - caloriesConsumed;
 
   const lastWorkout = workoutHistory?.[0];
+  const tabBarClearance = useTabBarContentClearance();
 
   return (
     <View className="flex-1 bg-ground">
       <GrainOverlay />
-      <ScrollView contentContainerClassName="pb-16">
+      <ScrollView contentContainerStyle={{ paddingBottom: tabBarClearance }}>
         {/* Editorial hero — the monumental image, bleeding off the trailing
             edge, with the headline offset to one side per the "subtly
             asymmetric" brief rather than centered. */}
