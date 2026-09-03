@@ -5,6 +5,7 @@ import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useCreateSavedMeal } from "@/features/nutrition/hooks";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type SaveMealModalProps = {
   visible: boolean;
@@ -17,6 +18,7 @@ type SaveMealModalProps = {
 // FoodPickerSheet/ExercisePickerSheet — a single text field plus two
 // buttons doesn't need a whole screen.
 export function SaveMealModal({ visible, userId, items, onClose }: SaveMealModalProps) {
+  const { tokens } = useDesignTheme();
   const [name, setName] = useState("");
   const createSavedMeal = useCreateSavedMeal(userId);
 
@@ -32,7 +34,12 @@ export function SaveMealModal({ visible, userId, items, onClose }: SaveMealModal
 
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={close}>
-      <View className="flex-1 items-center justify-center bg-black/60 px-8">
+      {/* Re-declare the theme's CSS vars here — RN Web portals Modal content
+          to document.body, outside the DOM subtree that carries them from
+          the root layout, so every themed color class would otherwise
+          silently resolve to nothing on web. See CustomExerciseForm's Modal
+          for the fuller explanation. */}
+      <View className="flex-1 items-center justify-center bg-black/60 px-8" style={tokens.vars}>
         <View className="w-full gap-4 border border-border bg-ground p-4">
           <ThemedText variant="display" className="text-lg text-ink">
             Save as a meal

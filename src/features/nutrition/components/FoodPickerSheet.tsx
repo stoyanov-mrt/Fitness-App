@@ -104,7 +104,12 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 bg-ground pt-16">
+      {/* Re-declare the theme's CSS vars here — RN Web portals Modal content
+          to document.body, outside the DOM subtree that carries them from
+          the root layout, so every themed color class would otherwise
+          silently resolve to nothing on web. See CustomExerciseForm's Modal
+          for the fuller explanation. */}
+      <View className="flex-1 bg-ground pt-16" style={tokens.vars}>
         <View className="flex-row items-center justify-between px-4 pb-3">
           <ThemedText variant="display" className="text-xl capitalize text-ink">
             Add to {mealType}

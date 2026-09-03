@@ -97,7 +97,14 @@ export default function ExerciseLibraryScreen() {
       )}
 
       <Modal visible={addingCustom} animationType="slide" onRequestClose={() => setAddingCustom(false)}>
-        <View className="flex-1 bg-ground pt-16">
+        {/* RN Web's Modal portals its content to document.body, outside the
+            DOM subtree that carries the theme's CSS custom properties
+            (applied via NativeWind's vars() on the root layout View) — so
+            without redeclaring them here, every themed color class inside
+            this Modal silently resolves to nothing on web. Native is
+            unaffected (Modal doesn't break React context there), but this
+            costs nothing on native either. */}
+        <View className="flex-1 bg-ground pt-16" style={tokens.vars}>
           <View className="flex-row items-center justify-between px-4 pb-3">
             <ThemedText variant="display" className="text-xl text-ink">
               Add Custom Exercise
