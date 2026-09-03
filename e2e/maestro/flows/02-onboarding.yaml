@@ -1,0 +1,45 @@
+appId: com.stoyanovmrt.fitnessapp
+---
+# Signs in with a pre-seeded, confirmed test account that has NOT completed
+# onboarding yet, then fills out the onboarding form and lands on the tabs
+# home. Set MAESTRO_TEST_EMAIL / MAESTRO_TEST_PASSWORD to a real test account
+# in the target Supabase project before running (`maestro test --env`).
+- launchApp:
+    clearState: true
+
+- assertVisible: "Welcome back"
+- tapOn:
+    id: "Email"
+- inputText: "${MAESTRO_TEST_EMAIL}"
+- tapOn:
+    id: "Password"
+- inputText: "${MAESTRO_TEST_PASSWORD}"
+- tapOn: "Sign In"
+
+- assertVisible: "Tell us about yourself"
+
+- tapOn:
+    id: "Full name"
+- inputText: "Maestro Test"
+
+- tapOn: "Female"
+
+- tapOn:
+    id: "Date of birth (YYYY-MM-DD)"
+- inputText: "1995-06-15"
+
+- tapOn:
+    id: "Height (cm)"
+- inputText: "175"
+
+- tapOn:
+    id: "Weight (kg)"
+- inputText: "75"
+
+- tapOn: "Moderate"
+- tapOn: "Maintain"
+- tapOn: "Metric (kg / cm)"
+
+- tapOn: "Finish"
+
+- assertVisible: "Workouts"

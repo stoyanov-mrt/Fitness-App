@@ -1,0 +1,48 @@
+appId: com.stoyanovmrt.fitnessapp
+---
+# Signs in with a pre-seeded, already-onboarded test account and logs a
+# custom food to today's breakfast, then verifies it shows up in the diary.
+# Set MAESTRO_TEST_EMAIL / MAESTRO_TEST_PASSWORD before running.
+- launchApp:
+    clearState: true
+
+- assertVisible: "Welcome back"
+- tapOn:
+    id: "Email"
+- inputText: "${MAESTRO_TEST_EMAIL}"
+- tapOn:
+    id: "Password"
+- inputText: "${MAESTRO_TEST_PASSWORD}"
+- tapOn: "Sign In"
+
+- tapOn: "Nutrition"
+- assertVisible: "Nutrition"
+
+- tapOn:
+    id: "Add to Breakfast"
+
+- assertVisible: "Add to breakfast"
+- tapOn: "Can't find it? Add a custom food"
+
+- tapOn:
+    id: "Name"
+- inputText: "Maestro Test Oats"
+- tapOn:
+    id: "Calories"
+- inputText: "350"
+- tapOn:
+    id: "Protein (g)"
+- inputText: "12"
+- tapOn:
+    id: "Carbs (g)"
+- inputText: "60"
+- tapOn:
+    id: "Fat (g)"
+- inputText: "6"
+
+- tapOn: "Save & continue"
+
+- assertVisible: "Maestro Test Oats"
+- tapOn: "Add to diary"
+
+- assertVisible: "Maestro Test Oats"

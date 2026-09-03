@@ -1,0 +1,101 @@
+appId: com.stoyanovmrt.fitnessapp
+---
+# The critical end-to-end path per CLAUDE.md's testing conventions:
+# signup → onboarding → log workout → log food, as one continuous flow
+# against a fresh account. Requires the target Supabase project to have
+# email confirmation disabled (so sign-up returns a session immediately) and
+# the exercises table seeded (supabase/seed/import-exercises.ts) with an
+# exercise literally named "Bench Press" — WorkoutExerciseCard scopes its
+# field ids by exercise name, so this must match the seeded name exactly.
+#
+# The individual flows/ specs cover each stage in isolation against a
+# pre-seeded test account (useful once this one has been run manually to
+# confirm the happy path end-to-end); this one is the single source of truth
+# for "does the whole path work".
+- runScript:
+    script: |
+      output.email = `maestro-test-${Date.now()}@example.com`;
+      output.password = "TestPassword123!";
+
+- launchApp:
+    clearState: true
+
+# --- Sign up ---
+- assertVisible: "Create your account"
+- tapOn:
+    id: "Email"
+- inputText: "${output.email}"
+- tapOn:
+    id: "Password"
+- inputText: "${output.password}"
+- tapOn:
+    id: "Confirm Password"
+- inputText: "${output.password}"
+- tapOn: "Sign Up"
+
+# --- Onboarding ---
+- assertVisible: "Tell us about yourself"
+- tapOn:
+    id: "Full name"
+- inputText: "Maestro Test"
+- tapOn: "Female"
+- tapOn:
+    id: "Date of birth (YYYY-MM-DD)"
+- inputText: "1995-06-15"
+- tapOn:
+    id: "Height (cm)"
+- inputText: "175"
+- tapOn:
+    id: "Weight (kg)"
+- inputText: "75"
+- tapOn: "Moderate"
+- tapOn: "Maintain"
+- tapOn: "Metric (kg / cm)"
+- tapOn: "Finish"
+
+# --- Log a workout ---
+- tapOn: "Workouts"
+- assertVisible: "Start Empty Workout"
+- tapOn: "Start Empty Workout"
+- tapOn: "+ Add Exercise"
+- tapOn:
+    id: "Search exercises"
+- inputText: "Bench Press"
+- tapOn:
+    text: "Bench Press.*"
+    index: 0
+- tapOn:
+    id: "Weight (kg) — Bench Press"
+- inputText: "60"
+- tapOn:
+    id: "Reps — Bench Press"
+- inputText: "8"
+- tapOn:
+    id: "Log set — Bench Press"
+- assertVisible: "60 kg × 8"
+- tapOn: "Finish Workout"
+
+# --- Log food ---
+- tapOn: "Nutrition"
+- tapOn:
+    id: "Add to Breakfast"
+- assertVisible: "Add to breakfast"
+- tapOn: "Can't find it? Add a custom food"
+- tapOn:
+    id: "Name"
+- inputText: "Maestro Test Oats"
+- tapOn:
+    id: "Calories"
+- inputText: "350"
+- tapOn:
+    id: "Protein (g)"
+- inputText: "12"
+- tapOn:
+    id: "Carbs (g)"
+- inputText: "60"
+- tapOn:
+    id: "Fat (g)"
+- inputText: "6"
+- tapOn: "Save & continue"
+- tapOn: "Add to diary"
+- assertVisible: "Maestro Test Oats"

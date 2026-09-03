@@ -1,0 +1,11 @@
+# Maestro workspace config — shared across every flow in this directory.
+# https://docs.maestro.dev/cli/test-suites-and-reports
+#
+# appId must match the native bundle identifier (ios.bundleIdentifier /
+# android.package) once one is set in app.json for EAS builds. It isn't set
+# yet (no EAS project has been created), so this is a placeholder — update it
+# in the same change that adds those fields.
+appId: com.stoyanovmrt.fitnessapp
+flows:
+  - "flows/*.yaml"
+  - "critical-path.yaml"

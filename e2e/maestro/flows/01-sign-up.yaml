@@ -1,0 +1,33 @@
+appId: com.stoyanovmrt.fitnessapp
+---
+# Sign up with a freshly generated email so repeat runs never collide with an
+# already-registered account. Ends on the sign-up screen's "check your email"
+# state — this project's Supabase config requires confirming the address
+# before a session is issued (see app/(auth)/sign-up.tsx), so a real run of
+# this flow needs email confirmation disabled in the target Supabase project
+# (a local/dev project is the right place to run this suite).
+- runScript:
+    script: |
+      output.email = `maestro-test-${Date.now()}@example.com`;
+      output.password = "TestPassword123!";
+
+- launchApp:
+    clearState: true
+
+- assertVisible: "Create your account"
+
+- tapOn:
+    id: "Email"
+- inputText: "${output.email}"
+
+- tapOn:
+    id: "Password"
+- inputText: "${output.password}"
+
+- tapOn:
+    id: "Confirm Password"
+- inputText: "${output.password}"
+
+- tapOn: "Sign Up"
+
+- assertVisible: "Check your email"

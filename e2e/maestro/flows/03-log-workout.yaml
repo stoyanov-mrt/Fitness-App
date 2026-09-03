@@ -1,0 +1,49 @@
+appId: com.stoyanovmrt.fitnessapp
+---
+# Signs in with a pre-seeded, already-onboarded test account, starts an empty
+# workout, adds an exercise from the library, logs one set, then finishes the
+# workout. Assumes the exercises table is seeded (supabase/seed/import-exercises.ts)
+# with an exercise literally named "Bench Press" — WorkoutExerciseCard scopes
+# its field ids by exercise name (see src/features/workouts/components/
+# WorkoutExerciseCard.tsx), so this must match the seeded name exactly. Set
+# MAESTRO_TEST_EMAIL / MAESTRO_TEST_PASSWORD before running.
+- launchApp:
+    clearState: true
+
+- assertVisible: "Welcome back"
+- tapOn:
+    id: "Email"
+- inputText: "${MAESTRO_TEST_EMAIL}"
+- tapOn:
+    id: "Password"
+- inputText: "${MAESTRO_TEST_PASSWORD}"
+- tapOn: "Sign In"
+
+- tapOn: "Workouts"
+- assertVisible: "Start Empty Workout"
+- tapOn: "Start Empty Workout"
+
+- assertVisible: "No exercises yet"
+- tapOn: "+ Add Exercise"
+
+- assertVisible: "Add Exercise"
+- tapOn:
+    id: "Search exercises"
+- inputText: "Bench Press"
+- tapOn:
+    text: "Bench Press.*"
+    index: 0
+
+- tapOn:
+    id: "Weight (kg) — Bench Press"
+- inputText: "60"
+- tapOn:
+    id: "Reps — Bench Press"
+- inputText: "8"
+- tapOn:
+    id: "Log set — Bench Press"
+
+- assertVisible: "60 kg × 8"
+
+- tapOn: "Finish Workout"
+- assertVisible: "Workouts"
