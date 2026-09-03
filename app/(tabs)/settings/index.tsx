@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession, useSignOut } from "@/features/auth/hooks";
+import { ReminderSettings } from "@/features/settings/components/ReminderSettings";
 import {
   useExportNutritionCsv,
   useExportWorkoutsCsv,
@@ -86,6 +87,11 @@ export default function SettingsScreen() {
               setThemePreference(theme as ThemePreference);
             }}
           />
+        </View>
+
+        <View className="gap-4 border-t border-border pt-6">
+          <SectionLabel>Notifications</SectionLabel>
+          <ReminderSettings />
         </View>
 
         <View className="gap-3 border-t border-border pt-6">

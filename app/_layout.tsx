@@ -9,6 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ConnectivityBanner } from "@/components/ConnectivityBanner";
 import { useAuthSessionSync } from "@/features/auth/hooks";
+import "@/lib/notifications";
 import { useProtectedRoute } from "@/lib/navigation";
 import { useSyncNetworkStatus } from "@/lib/network";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";

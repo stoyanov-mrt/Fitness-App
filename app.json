@@ -41,7 +41,8 @@
       ],
       "@sentry/react-native",
       "expo-sharing",
-      "expo-font"
+      "expo-font",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
