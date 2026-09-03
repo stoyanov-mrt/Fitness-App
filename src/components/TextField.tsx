@@ -24,6 +24,10 @@ export function TextField({ label, error, className, ...inputProps }: TextFieldP
         placeholderTextColor={tokens.swatch.inkDim}
         accessibilityLabel={label}
         accessibilityHint={error}
+        // Defaults to the label so E2E specs (e2e/maestro/) have a stable,
+        // unambiguous target distinct from the label Text above — override
+        // via the testID prop when a screen needs a different id.
+        testID={label}
         {...inputProps}
       />
       {error ? (

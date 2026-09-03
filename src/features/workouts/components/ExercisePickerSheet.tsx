@@ -10,14 +10,27 @@ type ExercisePickerSheetProps = {
   visible: boolean;
   onClose: () => void;
   onSelect: (exercise: Exercise) => void;
+  // Exercises already present in the target workout/routine, hidden from
+  // results. Prevents adding the same exercise twice — WorkoutExerciseCard's
+  // per-row field ids are scoped by exercise name (see that component), so a
+  // workout couldn't otherwise tell two "Bench Press" rows apart in tests.
+  excludeExerciseIds?: string[];
 };
 
 // Shared by the routine builder and the active workout logger — both need
 // "search the library, pick one" and nothing route-navigation-worthy.
-export function ExercisePickerSheet({ visible, onClose, onSelect }: ExercisePickerSheetProps) {
+export function ExercisePickerSheet({
+  visible,
+  onClose,
+  onSelect,
+  excludeExerciseIds,
+}: ExercisePickerSheetProps) {
   const { tokens } = useDesignTheme();
   const [query, setQuery] = useState("");
   const { data: exercises, isLoading } = useExerciseSearch(query);
+  const results = excludeExerciseIds
+    ? (exercises ?? []).filter((exercise) => !excludeExerciseIds.includes(exercise.id))
+    : (exercises ?? []);
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -41,6 +54,8 @@ export function ExercisePickerSheet({ visible, onClose, onSelect }: ExercisePick
           autoCapitalize="none"
           value={query}
           onChangeText={setQuery}
+          accessibilityLabel="Search exercises"
+          testID="Search exercises"
         />
 
         {isLoading ? (
@@ -49,7 +64,7 @@ export function ExercisePickerSheet({ visible, onClose, onSelect }: ExercisePick
           </ThemedText>
         ) : (
           <FlatList
-            data={exercises ?? []}
+            data={results}
             keyExtractor={(item) => item.id}
             contentContainerClassName="px-4 pb-8"
             ListEmptyComponent={

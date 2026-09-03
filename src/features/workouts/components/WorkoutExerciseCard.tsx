@@ -87,6 +87,11 @@ export function WorkoutExerciseCard({
               keyboardType="numeric"
               value={weight}
               onChangeText={setWeight}
+              // Scoped per exercise row — this component renders once per
+              // exercise in a workout, so a bare "Weight (kg)" id would
+              // collide across rows for any workout with 2+ exercises.
+              accessibilityLabel={`Weight (kg) — ${workoutExercise.exercise.name}`}
+              testID={`Weight (kg) — ${workoutExercise.exercise.name}`}
             />
           </View>
           <View className="flex-1 gap-1">
@@ -99,6 +104,8 @@ export function WorkoutExerciseCard({
               keyboardType="numeric"
               value={reps}
               onChangeText={setReps}
+              accessibilityLabel={`Reps — ${workoutExercise.exercise.name}`}
+              testID={`Reps — ${workoutExercise.exercise.name}`}
             />
           </View>
           <Pressable
@@ -116,6 +123,8 @@ export function WorkoutExerciseCard({
           </Pressable>
           <Pressable
             accessibilityRole="button"
+            accessibilityLabel={`Log set — ${workoutExercise.exercise.name}`}
+            testID={`Log set — ${workoutExercise.exercise.name}`}
             onPress={onLogSet}
             disabled={logSet.isPending}
             className="border border-ink bg-ink px-4 py-2.5"

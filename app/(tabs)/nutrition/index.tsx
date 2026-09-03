@@ -93,7 +93,14 @@ export default function NutritionScreen() {
               <ThemedText variant="label" className="text-xs text-ink-dim">
                 {MEAL_LABELS[mealType]}
               </ThemedText>
-              <Pressable accessibilityRole="button" onPress={() => setAddingMealType(mealType)}>
+              <Pressable
+                accessibilityRole="button"
+                // Scoped per meal type — this row repeats once per entry in
+                // MEAL_TYPES, so a bare "+ Add" id would be ambiguous.
+                accessibilityLabel={`Add to ${MEAL_LABELS[mealType]}`}
+                testID={`Add to ${MEAL_LABELS[mealType]}`}
+                onPress={() => setAddingMealType(mealType)}
+              >
                 <ThemedText variant="label" className="text-xs text-accent">
                   + Add
                 </ThemedText>

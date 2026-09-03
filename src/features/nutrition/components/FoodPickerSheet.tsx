@@ -118,6 +118,8 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
               autoCapitalize="none"
               value={query}
               onChangeText={setQuery}
+              accessibilityLabel="Search foods"
+              testID="Search foods"
             />
             {isLoading ? (
               <ThemedText variant="body" className="px-4 text-ink-dim">
