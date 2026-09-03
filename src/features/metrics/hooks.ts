@@ -4,6 +4,7 @@ import {
   getLatestBodyMetric,
   getProgressPhotoUrl,
   listBodyMetrics,
+  removeProgressPhoto,
   upsertBodyMetric,
   uploadProgressPhoto,
 } from "./api";
@@ -53,6 +54,18 @@ export function useUploadProgressPhoto(userId: string | undefined) {
   return useMutation({
     mutationFn: ({ date, localUri }: { date: string; localUri: string }) =>
       uploadProgressPhoto(userId as string, date, localUri),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: metricsQueryKey(userId) });
+      queryClient.invalidateQueries({ queryKey: ["body-metrics-latest", userId] });
+    },
+  });
+}
+
+export function useRemoveProgressPhoto(userId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ date, path }: { date: string; path: string }) =>
+      removeProgressPhoto(userId as string, date, path),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: metricsQueryKey(userId) });
       queryClient.invalidateQueries({ queryKey: ["body-metrics-latest", userId] });

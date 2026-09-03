@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 
@@ -9,7 +10,7 @@ import { TextField } from "@/components/TextField";
 import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
 import { MeasurementChart } from "@/features/metrics/components/MeasurementChart";
-import { ProgressPhotoThumbnail } from "@/features/metrics/components/ProgressPhotoThumbnail";
+import { ProgressPhotosModal } from "@/features/metrics/components/ProgressPhotosModal";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
 import { useBodyMetrics, useLatestBodyMetric, useLogBodyMetric, useUploadProgressPhoto } from "@/features/metrics/hooks";
 import {
@@ -38,6 +39,7 @@ export default function MetricsScreen() {
   const { data: latest } = useLatestBodyMetric(userId);
   const logMetric = useLogBodyMetric(userId);
   const uploadPhoto = useUploadProgressPhoto(userId);
+  const [photosVisible, setPhotosVisible] = useState(false);
 
   const {
     control,
@@ -207,11 +209,11 @@ export default function MetricsScreen() {
         <Button label="Save" onPress={onSave} loading={logMetric.isPending} />
 
         {todayEntry?.photo_urls && todayEntry.photo_urls.length > 0 ? (
-          <View className="flex-row flex-wrap gap-2">
-            {todayEntry.photo_urls.map((path) => (
-              <ProgressPhotoThumbnail key={path} path={path} />
-            ))}
-          </View>
+          <Button
+            label={`View Progress Photos (${todayEntry.photo_urls.length})`}
+            variant="secondary"
+            onPress={() => setPhotosVisible(true)}
+          />
         ) : null}
         {uploadPhoto.isError ? (
           <ThemedText variant="body" className="text-sm text-accent">
@@ -225,6 +227,14 @@ export default function MetricsScreen() {
           loading={uploadPhoto.isPending}
         />
       </View>
+
+      <ProgressPhotosModal
+        visible={photosVisible}
+        userId={userId}
+        date={date}
+        photoUrls={todayEntry?.photo_urls ?? []}
+        onClose={() => setPhotosVisible(false)}
+      />
     </ScrollView>
   );
 }

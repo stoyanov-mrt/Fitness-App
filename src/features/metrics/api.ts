@@ -87,6 +87,35 @@ export async function uploadProgressPhoto(userId: string, date: string, localUri
   return data as BodyMetric;
 }
 
+/** Deletes a progress photo from Storage and drops its path from that
+ * day's body_metrics row. */
+export async function removeProgressPhoto(userId: string, date: string, path: string) {
+  const { error: removeError } = await supabase.storage
+    .from(PROGRESS_PHOTOS_BUCKET)
+    .remove([path]);
+  if (removeError) throw removeError;
+
+  const existing = await supabase
+    .from("body_metrics")
+    .select("photo_urls")
+    .eq("user_id", userId)
+    .eq("date", date)
+    .maybeSingle();
+  if (existing.error) throw existing.error;
+
+  const photoUrls = (existing.data?.photo_urls ?? []).filter((p) => p !== path);
+
+  const { data, error } = await supabase
+    .from("body_metrics")
+    .update({ photo_urls: photoUrls })
+    .eq("user_id", userId)
+    .eq("date", date)
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data as BodyMetric;
+}
+
 /** Progress photos live in a private bucket — reading one back needs a
  * short-lived signed URL, not a public URL. */
 export async function getProgressPhotoUrl(path: string, expiresInSeconds = 3600) {
