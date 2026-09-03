@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useTabBarContentClearance } from "@/constants/layout";
 import { useSession } from "@/features/auth/hooks";
+import { MeasurementChart } from "@/features/metrics/components/MeasurementChart";
 import { ProgressPhotoThumbnail } from "@/features/metrics/components/ProgressPhotoThumbnail";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
 import { useBodyMetrics, useLatestBodyMetric, useLogBodyMetric, useUploadProgressPhoto } from "@/features/metrics/hooks";
@@ -103,6 +104,31 @@ export default function MetricsScreen() {
           ) : null}
         </View>
         <WeightChart metrics={metrics ?? []} />
+      </View>
+
+      {/* Full-width, not paired 2-up — react-native-gifted-charts sizes
+          itself from data-point count × spacing rather than shrinking to
+          fit its container, so a chart calibrated for a full-width column
+          (like WeightChart's spacing) would overflow a half-width one. */}
+      <View className="gap-3 border border-border bg-ground-raised p-4">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
+          Waist
+        </ThemedText>
+        <MeasurementChart metrics={metrics ?? []} measurementKey="waist_cm" unit="cm" />
+      </View>
+
+      <View className="gap-3 border border-border bg-ground-raised p-4">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
+          Chest
+        </ThemedText>
+        <MeasurementChart metrics={metrics ?? []} measurementKey="chest_cm" unit="cm" />
+      </View>
+
+      <View className="gap-3 border border-border bg-ground-raised p-4">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
+          Arm
+        </ThemedText>
+        <MeasurementChart metrics={metrics ?? []} measurementKey="arm_cm" unit="cm" />
       </View>
 
       <View className="gap-4 border border-border bg-ground-raised p-4">
