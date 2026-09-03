@@ -8,7 +8,21 @@ module.exports = {
   darkMode: "class",
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      // Semantic tokens resolved at runtime from CSS custom properties set
+      // by the active design theme (see src/theme/designTokens.ts). Screens
+      // use `bg-ground`, `text-ink`, etc. instead of hardcoded neutral-*/
+      // dark: pairs, so switching the design theme re-colors everything.
+      colors: {
+        ground: "var(--color-ground)",
+        "ground-raised": "var(--color-ground-raised)",
+        ink: "var(--color-ink)",
+        "ink-dim": "var(--color-ink-dim)",
+        border: "var(--color-border)",
+        accent: "var(--color-accent)",
+        "accent-ink": "var(--color-accent-ink)",
+      },
+    },
   },
   plugins: [],
 };

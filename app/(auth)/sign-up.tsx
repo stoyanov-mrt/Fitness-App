@@ -2,9 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useSignUp } from "@/features/auth/hooks";
 import { signUpSchema, type SignUpFormValues } from "@/features/auth/signUpSchema";
@@ -40,16 +41,16 @@ export default function SignUpScreen() {
 
   if (needsEmailConfirmation) {
     return (
-      <View className="flex-1 items-center justify-center gap-3 bg-white px-8 dark:bg-neutral-950">
-        <Text className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+      <View className="flex-1 items-center justify-center gap-3 bg-ground px-8">
+        <ThemedText variant="displaySecondary" className="text-2xl text-ink">
           Check your email
-        </Text>
-        <Text className="text-center text-base text-neutral-500 dark:text-neutral-400">
+        </ThemedText>
+        <ThemedText variant="body" className="text-center text-base text-ink-dim">
           We sent a confirmation link to your email address. Confirm it, then sign in to finish
           setting up your account.
-        </Text>
-        <Link href="/sign-in" className="mt-2 text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-          Back to sign in
+        </ThemedText>
+        <Link href="/sign-in" className="mt-2 text-sm text-ink">
+          <ThemedText variant="bodyMedium">Back to sign in</ThemedText>
         </Link>
       </View>
     );
@@ -57,16 +58,16 @@ export default function SignUpScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
+      className="flex-1 bg-ground"
       contentContainerClassName="flex-1 justify-center gap-6 px-6 py-12"
     >
       <View className="gap-1">
-        <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="display" className="text-3xl text-ink">
           Create your account
-        </Text>
-        <Text className="text-base text-neutral-500 dark:text-neutral-400">
+        </ThemedText>
+        <ThemedText variant="body" className="text-base text-ink-dim">
           Track your workouts and nutrition in one place.
-        </Text>
+        </ThemedText>
       </View>
 
       <View className="gap-4">
@@ -117,16 +118,16 @@ export default function SignUpScreen() {
           )}
         />
         {signUp.isError ? (
-          <Text className="text-sm text-red-600 dark:text-red-400">
+          <ThemedText variant="body" className="text-sm text-accent">
             {signUp.error instanceof Error ? signUp.error.message : "Sign up failed"}
-          </Text>
+          </ThemedText>
         ) : null}
       </View>
 
       <Button label="Sign Up" onPress={onSubmit} loading={signUp.isPending} />
 
-      <Link href="/sign-in" className="text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Already have an account? <Text className="font-semibold">Sign in</Text>
+      <Link href="/sign-in" className="text-center text-sm text-ink-dim">
+        Already have an account? <ThemedText variant="bodyMedium">Sign in</ThemedText>
       </Link>
     </ScrollView>
   );

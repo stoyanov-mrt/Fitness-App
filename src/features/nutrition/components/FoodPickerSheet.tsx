@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { FlatList, Modal, Pressable, ScrollView, TextInput, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useAddMealItem, useCreateCustomFood, useFoodSearch } from "@/features/nutrition/hooks";
 import {
@@ -12,6 +13,7 @@ import {
   type CustomFoodFormValues,
 } from "@/features/nutrition/schemas";
 import type { Food, MealType } from "@/features/nutrition/types";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type FoodPickerSheetProps = {
   visible: boolean;
@@ -32,6 +34,7 @@ const customFoodDefaults: CustomFoodFormInput = {
 };
 
 export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: FoodPickerSheetProps) {
+  const { tokens } = useDesignTheme();
   const [step, setStep] = useState<Step>("search");
   const [query, setQuery] = useState("");
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
@@ -93,39 +96,42 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 bg-white pt-16 dark:bg-neutral-950">
+      <View className="flex-1 bg-ground pt-16">
         <View className="flex-row items-center justify-between px-4 pb-3">
-          <Text className="text-xl font-bold capitalize text-neutral-900 dark:text-neutral-50">
+          <ThemedText variant="display" className="text-xl capitalize text-ink">
             Add to {mealType}
-          </Text>
+          </ThemedText>
           <Pressable accessibilityRole="button" onPress={close}>
-            <Text className="text-base font-medium text-neutral-500 dark:text-neutral-400">
+            <ThemedText variant="bodyMedium" className="text-base text-ink-dim">
               Close
-            </Text>
+            </ThemedText>
           </Pressable>
         </View>
 
         {step === "search" ? (
           <>
             <TextInput
-              className="mx-4 mb-3 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50"
+              className="mx-4 mb-3 border border-border bg-ground-raised px-3 py-2.5 text-base text-ink"
+              style={{ fontFamily: tokens.fonts.body }}
               placeholder="Search foods..."
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={tokens.swatch.inkDim}
               autoCapitalize="none"
               value={query}
               onChangeText={setQuery}
             />
             {isLoading ? (
-              <Text className="px-4 text-neutral-500 dark:text-neutral-400">Loading...</Text>
+              <ThemedText variant="body" className="px-4 text-ink-dim">
+                Loading...
+              </ThemedText>
             ) : (
               <FlatList
                 data={foods ?? []}
                 keyExtractor={(item) => item.id}
                 contentContainerClassName="px-4 pb-4"
                 ListEmptyComponent={
-                  <Text className="px-1 py-4 text-neutral-500 dark:text-neutral-400">
+                  <ThemedText variant="body" className="px-1 py-4 text-ink-dim">
                     No foods found.
-                  </Text>
+                  </ThemedText>
                 }
                 renderItem={({ item }) => (
                   <Pressable
@@ -134,20 +140,20 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
                       setSelectedFood(item);
                       setStep("quantity");
                     }}
-                    className="border-b border-neutral-100 py-3 dark:border-neutral-900"
+                    className="border-b border-border py-3"
                   >
-                    <Text className="text-base font-medium text-neutral-900 dark:text-neutral-50">
+                    <ThemedText variant="bodyMedium" className="text-base text-ink">
                       {item.name}
-                    </Text>
-                    <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+                    </ThemedText>
+                    <ThemedText variant="body" className="text-sm text-ink-dim">
                       {item.calories} kcal · {item.protein_g}g protein per {item.serving_size}
                       {item.serving_unit}
-                    </Text>
+                    </ThemedText>
                   </Pressable>
                 )}
               />
             )}
-            <View className="border-t border-neutral-100 p-4 dark:border-neutral-900">
+            <View className="border-t border-border p-4">
               <Button
                 label="Can't find it? Add a custom food"
                 variant="secondary"
@@ -159,15 +165,15 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
 
         {step === "quantity" && selectedFood ? (
           <View className="gap-4 px-4">
-            <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+            <ThemedText variant="display" className="text-lg text-ink">
               {selectedFood.name}
-            </Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+            </ThemedText>
+            <ThemedText variant="body" className="text-sm text-ink-dim">
               {selectedFood.calories} kcal · {selectedFood.protein_g}g protein ·{" "}
               {selectedFood.carbs_g}g carbs · {selectedFood.fat_g}g fat per{" "}
               {selectedFood.serving_size}
               {selectedFood.serving_unit}
-            </Text>
+            </ThemedText>
             <TextField
               label="Servings"
               keyboardType="numeric"
@@ -188,9 +194,9 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
 
         {step === "custom" ? (
           <ScrollView contentContainerClassName="gap-4 px-4 pb-8">
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+            <ThemedText variant="body" className="text-sm text-ink-dim">
               Values are per 100 g / 100 ml.
-            </Text>
+            </ThemedText>
             <Controller
               control={control}
               name="name"
@@ -261,9 +267,9 @@ export function FoodPickerSheet({ visible, userId, date, mealType, onClose }: Fo
               )}
             />
             {createCustomFood.isError ? (
-              <Text className="text-sm text-red-600 dark:text-red-400">
+              <ThemedText variant="body" className="text-sm text-accent">
                 Couldn&apos;t save this food.
-              </Text>
+              </ThemedText>
             ) : null}
             <Button
               label="Save & continue"

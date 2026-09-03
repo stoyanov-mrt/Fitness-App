@@ -1,7 +1,8 @@
 import { Link, router } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { useRoutines, useStartWorkout, useWorkoutHistory } from "@/features/workouts/hooks";
 
@@ -17,11 +18,10 @@ export default function WorkoutsScreen() {
   const startWorkout = useStartWorkout(userId);
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-16"
-    >
-      <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">Workouts</Text>
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-16">
+      <ThemedText variant="display" className="text-3xl text-ink">
+        Workouts
+      </ThemedText>
 
       <Button
         label="Start Empty Workout"
@@ -34,17 +34,17 @@ export default function WorkoutsScreen() {
         }
       />
 
-      <Link href="/workouts/exercises" className="text-center text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-        Browse Exercise Library
+      <Link href="/workouts/exercises" className="text-center text-sm text-ink">
+        <ThemedText variant="bodyMedium">Browse Exercise Library</ThemedText>
       </Link>
 
       <View className="gap-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             Routines
-          </Text>
-          <Link href="/workouts/routines/new" className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-            + New
+          </ThemedText>
+          <Link href="/workouts/routines/new" className="text-sm text-accent">
+            <ThemedText variant="bodyMedium">+ New</ThemedText>
           </Link>
         </View>
         {routines && routines.length > 0 ? (
@@ -53,40 +53,44 @@ export default function WorkoutsScreen() {
               key={routine.id}
               accessibilityRole="button"
               onPress={() => router.push(`/workouts/routines/${routine.id}`)}
-              className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800"
+              className="border border-border bg-ground-raised p-4"
             >
-              <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="bodyMedium" className="text-ink">
                 {routine.name}
-              </Text>
+              </ThemedText>
             </Pressable>
           ))
         ) : (
-          <Text className="text-neutral-500 dark:text-neutral-400">No routines yet.</Text>
+          <ThemedText variant="body" className="text-ink-dim">
+            No routines yet.
+          </ThemedText>
         )}
       </View>
 
       <View className="gap-3">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
           History
-        </Text>
+        </ThemedText>
         {history && history.length > 0 ? (
           history.map((workout) => (
             <Pressable
               key={workout.id}
               accessibilityRole="button"
               onPress={() => router.push(`/workouts/session/${workout.id}`)}
-              className="flex-row items-center justify-between rounded-xl border border-neutral-200 p-4 dark:border-neutral-800"
+              className="flex-row items-center justify-between border border-border bg-ground-raised p-4"
             >
-              <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="bodyMedium" className="text-ink">
                 {workout.name}
-              </Text>
-              <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+              </ThemedText>
+              <ThemedText variant="body" className="text-sm text-ink-dim">
                 {formatDate(workout.started_at)}
-              </Text>
+              </ThemedText>
             </Pressable>
           ))
         ) : (
-          <Text className="text-neutral-500 dark:text-neutral-400">No workouts logged yet.</Text>
+          <ThemedText variant="body" className="text-ink-dim">
+            No workouts logged yet.
+          </ThemedText>
         )}
       </View>
     </ScrollView>

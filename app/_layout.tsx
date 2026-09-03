@@ -1,6 +1,7 @@
 import "@/theme/global.css";
 
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ActivityIndicator, View } from "react-native";
@@ -13,17 +14,20 @@ import { useSyncNetworkStatus } from "@/lib/network";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
 import { Sentry } from "@/lib/sentry";
 import { useSyncNativeWindTheme } from "@/lib/theme";
+import { designThemeFontAssets } from "@/theme/designTokens";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 function RootNavigator() {
   useAuthSessionSync();
   useSyncNativeWindTheme();
   useSyncNetworkStatus();
+  const { tokens } = useDesignTheme();
   const { isReady } = useProtectedRoute();
 
   if (!isReady) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-950">
-        <ActivityIndicator />
+      <View className="flex-1 items-center justify-center bg-ground">
+        <ActivityIndicator color={tokens.swatch.ink} />
       </View>
     );
   }
@@ -37,16 +41,36 @@ function RootNavigator() {
 }
 
 function RootLayout() {
+  // Loaded once, up front, for both design themes at once — switching the
+  // theme is then just re-pointing which family names get used, no
+  // re-fetch/re-mount. See src/theme/designTokens.ts.
+  const [fontsLoaded] = useFonts(designThemeFontAssets);
+  const { theme, tokens } = useDesignTheme();
+
+  if (!fontsLoaded) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
-    <SafeAreaProvider>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister: asyncStoragePersister }}
-      >
-        <RootNavigator />
-        <StatusBar style="auto" />
-      </PersistQueryClientProvider>
-    </SafeAreaProvider>
+    // The active design theme's CSS custom properties (--color-ground,
+    // --color-ink, ...) live on this wrapper via NativeWind's vars() —
+    // every `bg-ground`/`text-ink`/etc. class underneath resolves against
+    // them, so switching the theme re-colors the whole tree live.
+    <View style={[{ flex: 1 }, tokens.vars]} className="flex-1 bg-ground">
+      <SafeAreaProvider>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister: asyncStoragePersister }}
+        >
+          <RootNavigator />
+          <StatusBar style={theme === "dither" ? "light" : "dark"} />
+        </PersistQueryClientProvider>
+      </SafeAreaProvider>
+    </View>
   );
 }
 

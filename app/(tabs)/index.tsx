@@ -1,16 +1,28 @@
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { GrainOverlay } from "@/components/decor/GrainOverlay";
+import { MonumentalImage } from "@/components/decor/MonumentalImage";
 import { ProgressRing } from "@/components/ProgressRing";
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { useBodyMetrics, useLatestBodyMetric } from "@/features/metrics/hooks";
 import { WeightChart } from "@/features/metrics/components/WeightChart";
 import { useDailySummary, useLatestGoal } from "@/features/nutrition/hooks";
 import { useWorkoutHistory } from "@/features/workouts/hooks";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 function todayDateString() {
   return new Date().toLocaleDateString("en-CA");
+}
+
+function todayLabel() {
+  return new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function formatDate(value: string) {
@@ -21,7 +33,12 @@ function round(value: number) {
   return Math.round(value);
 }
 
+function Card({ children }: { children: React.ReactNode }) {
+  return <View className="gap-2 border border-border bg-ground-raised p-4">{children}</View>;
+}
+
 export default function DashboardScreen() {
+  const { theme } = useDesignTheme();
   const { data: session } = useSession();
   const userId = session?.user.id;
   const date = todayDateString();
@@ -40,84 +57,117 @@ export default function DashboardScreen() {
   const lastWorkout = workoutHistory?.[0];
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-16"
-    >
-      <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">Dashboard</Text>
-
-      <View className="items-center gap-4 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <ProgressRing progress={progress}>
-          <Text className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
-            {round(caloriesConsumed)}
-          </Text>
-          <Text className="text-xs text-neutral-500 dark:text-neutral-400">
-            of {caloriesTarget || "—"} kcal
-          </Text>
-        </ProgressRing>
-        <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-          {caloriesTarget > 0
-            ? caloriesRemaining >= 0
-              ? `${round(caloriesRemaining)} kcal remaining`
-              : `${round(-caloriesRemaining)} kcal over`
-            : "Set your goals in onboarding"}
-        </Text>
-        <View className="flex-row justify-between self-stretch">
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-            P {round(summary?.total_protein_g ?? 0)}g
-          </Text>
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-            C {round(summary?.total_carbs_g ?? 0)}g
-          </Text>
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-            F {round(summary?.total_fat_g ?? 0)}g
-          </Text>
-        </View>
-      </View>
-
-      <View className="gap-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-          Last Workout
-        </Text>
-        {lastWorkout ? (
-          <View className="flex-row items-center justify-between">
-            <Text className="text-neutral-900 dark:text-neutral-50">{lastWorkout.name}</Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-              {formatDate(lastWorkout.started_at)}
-            </Text>
+    <View className="flex-1 bg-ground">
+      <GrainOverlay />
+      <ScrollView contentContainerClassName="pb-16">
+        {/* Editorial hero — the monumental image, bleeding off the trailing
+            edge, with the headline offset to one side per the "subtly
+            asymmetric" brief rather than centered. */}
+        <View className="flex-row items-end justify-between gap-4 px-6 pb-6 pt-16">
+          <View className="flex-1 gap-1">
+            <ThemedText variant="label" className="text-xs text-ink-dim">
+              {todayLabel()}
+            </ThemedText>
+            <ThemedText variant="display" className="text-4xl text-ink">
+              Dashboard
+            </ThemedText>
           </View>
-        ) : (
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-            No workouts logged yet.
-          </Text>
-        )}
-      </View>
+          <View className="w-24 opacity-90">
+            <MonumentalImage />
+          </View>
+        </View>
 
-      <View className="gap-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <View className="flex-row items-baseline justify-between">
-          <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-            Weight Trend
-          </Text>
-          {latestBodyMetric?.weight_kg != null ? (
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-              {latestBodyMetric.weight_kg} kg
-            </Text>
-          ) : null}
-        </View>
-        <WeightChart metrics={bodyMetrics ?? []} />
-      </View>
+        <View className={theme === "japanese" ? "gap-6 px-6" : "gap-4 px-6"}>
+          <Card>
+            <View className="items-center gap-4 py-2">
+              <ProgressRing progress={progress}>
+                <ThemedText variant="display" className="text-2xl text-ink">
+                  {round(caloriesConsumed)}
+                </ThemedText>
+                <ThemedText variant="label" className="text-[10px] text-ink-dim">
+                  of {caloriesTarget || "—"} kcal
+                </ThemedText>
+              </ProgressRing>
+              <ThemedText variant="body" className="text-sm text-ink-dim">
+                {caloriesTarget > 0
+                  ? caloriesRemaining >= 0
+                    ? `${round(caloriesRemaining)} kcal remaining`
+                    : `${round(-caloriesRemaining)} kcal over`
+                  : "Set your goals in onboarding"}
+              </ThemedText>
+              <View className="flex-row justify-between self-stretch border-t border-border pt-3">
+                <ThemedText variant="label" className="text-xs text-ink-dim">
+                  P {round(summary?.total_protein_g ?? 0)}g
+                </ThemedText>
+                <ThemedText variant="label" className="text-xs text-ink-dim">
+                  C {round(summary?.total_carbs_g ?? 0)}g
+                </ThemedText>
+                <ThemedText variant="label" className="text-xs text-ink-dim">
+                  F {round(summary?.total_fat_g ?? 0)}g
+                </ThemedText>
+              </View>
+            </View>
+          </Card>
 
-      <View className="flex-row gap-3">
-        <View className="flex-1">
-          <Button label="Log Weight" variant="secondary" onPress={() => router.push("/metrics")} />
+          <Card>
+            <ThemedText variant="label" className="text-xs text-ink-dim">
+              Last Workout
+            </ThemedText>
+            {lastWorkout ? (
+              <View className="flex-row items-center justify-between">
+                <ThemedText variant="bodyMedium" className="text-base text-ink">
+                  {lastWorkout.name}
+                </ThemedText>
+                <ThemedText variant="body" className="text-sm text-ink-dim">
+                  {formatDate(lastWorkout.started_at)}
+                </ThemedText>
+              </View>
+            ) : (
+              <ThemedText variant="body" className="text-sm text-ink-dim">
+                No workouts logged yet.
+              </ThemedText>
+            )}
+          </Card>
+
+          <Card>
+            <View className="flex-row items-baseline justify-between">
+              <ThemedText variant="label" className="text-xs text-ink-dim">
+                Weight Trend
+              </ThemedText>
+              {latestBodyMetric?.weight_kg != null ? (
+                <ThemedText variant="bodyMedium" className="text-sm text-ink">
+                  {latestBodyMetric.weight_kg} kg
+                </ThemedText>
+              ) : null}
+            </View>
+            <WeightChart metrics={bodyMetrics ?? []} />
+          </Card>
+
+          <View className="flex-row gap-3">
+            <View className="flex-1">
+              <Button
+                label="Log Weight"
+                variant="secondary"
+                onPress={() => router.push("/metrics")}
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                label="Log Food"
+                variant="secondary"
+                onPress={() => router.push("/nutrition")}
+              />
+            </View>
+            <View className="flex-1">
+              <Button
+                label="Workout"
+                variant="secondary"
+                onPress={() => router.push("/workouts")}
+              />
+            </View>
+          </View>
         </View>
-        <View className="flex-1">
-          <Button label="Log Food" variant="secondary" onPress={() => router.push("/nutrition")} />
-        </View>
-        <View className="flex-1">
-          <Button label="Workout" variant="secondary" onPress={() => router.push("/workouts")} />
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

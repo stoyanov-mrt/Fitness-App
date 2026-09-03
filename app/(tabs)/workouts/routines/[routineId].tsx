@@ -1,7 +1,8 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { useDeleteRoutine, useRoutine, useStartWorkout } from "@/features/workouts/hooks";
 
@@ -14,25 +15,24 @@ export default function RoutineDetailScreen() {
 
   if (isLoading || !routine) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-950">
-        <Text className="text-neutral-500 dark:text-neutral-400">Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-ground">
+        <ThemedText variant="body" className="text-ink-dim">
+          Loading...
+        </ThemedText>
       </View>
     );
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-6"
-    >
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-6">
       <View className="gap-1">
-        <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="display" className="text-3xl text-ink">
           {routine.name}
-        </Text>
+        </ThemedText>
         {routine.description ? (
-          <Text className="text-base text-neutral-500 dark:text-neutral-400">
+          <ThemedText variant="body" className="text-base text-ink-dim">
             {routine.description}
-          </Text>
+          </ThemedText>
         ) : null}
       </View>
 
@@ -40,14 +40,14 @@ export default function RoutineDetailScreen() {
         {routine.routine_exercises.map((re) => (
           <View
             key={re.id}
-            className="flex-row items-center justify-between rounded-xl border border-neutral-200 p-3 dark:border-neutral-800"
+            className="flex-row items-center justify-between border border-border bg-ground-raised p-3"
           >
-            <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+            <ThemedText variant="bodyMedium" className="text-ink">
               {re.exercise.name}
-            </Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+            </ThemedText>
+            <ThemedText variant="body" className="text-sm text-ink-dim">
               {re.target_sets ? `${re.target_sets} × ${re.target_reps ?? "?"}` : "—"}
-            </Text>
+            </ThemedText>
           </View>
         ))}
       </View>

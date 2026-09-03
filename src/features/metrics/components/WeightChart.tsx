@@ -1,7 +1,8 @@
 import { LineChart } from "react-native-gifted-charts";
-import { Text, useColorScheme } from "react-native";
 
+import { ThemedText } from "@/components/ThemedText";
 import type { BodyMetric } from "@/features/metrics/types";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type WeightChartProps = {
   metrics: BodyMetric[];
@@ -13,14 +14,14 @@ function formatShortDate(dateString: string) {
 }
 
 export function WeightChart({ metrics }: WeightChartProps) {
-  const isDark = useColorScheme() === "dark";
+  const { tokens } = useDesignTheme();
   const withWeight = metrics.filter((m) => m.weight_kg != null);
 
   if (withWeight.length < 2) {
     return (
-      <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+      <ThemedText variant="body" className="text-sm text-ink-dim">
         Log your weight on at least two days to see a trend.
-      </Text>
+      </ThemedText>
     );
   }
 
@@ -36,21 +37,19 @@ export function WeightChart({ metrics }: WeightChartProps) {
   const weights = data.map((d) => d.value);
   const yAxisOffset = Math.max(0, Math.floor(Math.min(...weights) - 2));
 
-  const lineColor = isDark ? "#fafafa" : "#171717";
-
   return (
     <LineChart
       data={data}
-      curved
       thickness={2}
-      color={lineColor}
-      dataPointsColor={lineColor}
+      color={tokens.swatch.accent}
+      dataPointsColor={tokens.swatch.accent}
       yAxisOffset={yAxisOffset}
-      yAxisTextStyle={{ color: isDark ? "#a3a3a3" : "#737373", fontSize: 10 }}
-      xAxisLabelTextStyle={{ color: isDark ? "#a3a3a3" : "#737373", fontSize: 10 }}
-      xAxisColor={isDark ? "#404040" : "#e5e5e5"}
-      yAxisColor={isDark ? "#404040" : "#e5e5e5"}
-      rulesColor={isDark ? "#262626" : "#f5f5f5"}
+      yAxisTextStyle={{ color: tokens.swatch.inkDim, fontSize: 10, fontFamily: tokens.fonts.body }}
+      xAxisLabelTextStyle={{ color: tokens.swatch.inkDim, fontSize: 10, fontFamily: tokens.fonts.body }}
+      xAxisColor={tokens.swatch.inkDim}
+      yAxisColor={tokens.swatch.inkDim}
+      rulesColor={tokens.progressRing.track}
+      rulesType="solid"
       noOfSections={4}
       spacing={Math.max(36, 280 / data.length)}
       initialSpacing={16}

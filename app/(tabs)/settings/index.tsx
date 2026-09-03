@@ -1,8 +1,11 @@
 import { router } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
 import { ChipSelect } from "@/components/ChipSelect";
+import { GrainOverlay } from "@/components/decor/GrainOverlay";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemeSelector } from "@/components/ThemeSelector";
 import { useSession, useSignOut } from "@/features/auth/hooks";
 import {
   useExportNutritionCsv,
@@ -18,11 +21,19 @@ const UNIT_OPTIONS = [
   { value: "imperial", label: "Imperial (lb / in)" },
 ] as const;
 
-const THEME_OPTIONS = [
+const APPEARANCE_OPTIONS = [
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" },
   { value: "system", label: "System" },
 ] as const;
+
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <ThemedText variant="label" className="text-xs text-ink-dim">
+      {children}
+    </ThemedText>
+  );
+}
 
 export default function SettingsScreen() {
   const { data: session } = useSession();
@@ -35,77 +46,83 @@ export default function SettingsScreen() {
   const exportNutrition = useExportNutritionCsv(userId);
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-12"
-    >
-      <View className="gap-1">
-        <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
-          Settings
-        </Text>
-        {session?.user.email ? (
-          <Text className="text-base text-neutral-500 dark:text-neutral-400">
-            {session.user.email}
-          </Text>
-        ) : null}
-      </View>
+    <View className="flex-1 bg-ground">
+      <GrainOverlay />
+      <ScrollView contentContainerClassName="gap-8 px-6 py-16" contentContainerStyle={{ maxWidth: 640 }}>
+        <View className="gap-1">
+          <ThemedText variant="display" className="text-4xl text-ink">
+            Settings
+          </ThemedText>
+          {session?.user.email ? (
+            <ThemedText variant="body" className="text-base text-ink-dim">
+              {session.user.email}
+            </ThemedText>
+          ) : null}
+        </View>
 
-      <ChipSelect
-        label="Units"
-        options={UNIT_OPTIONS}
-        value={profile?.unit_system}
-        onChange={(unit_system) => updateDisplayPreferences.mutate({ unit_system })}
-      />
+        <View className="gap-4 border-t border-border pt-6">
+          <ThemeSelector />
+        </View>
 
-      <ChipSelect
-        label="Theme"
-        options={THEME_OPTIONS}
-        value={profile?.theme}
-        onChange={(theme) => {
-          updateDisplayPreferences.mutate({ theme });
-          setThemePreference(theme as ThemePreference);
-        }}
-      />
+        <View className="gap-4 border-t border-border pt-6">
+          <SectionLabel>Preferences</SectionLabel>
+          <ChipSelect
+            label="Units"
+            options={UNIT_OPTIONS}
+            value={profile?.unit_system}
+            onChange={(unit_system) => updateDisplayPreferences.mutate({ unit_system })}
+          />
+          <ChipSelect
+            label="Appearance"
+            options={APPEARANCE_OPTIONS}
+            value={profile?.theme}
+            onChange={(theme) => {
+              updateDisplayPreferences.mutate({ theme });
+              setThemePreference(theme as ThemePreference);
+            }}
+          />
+        </View>
 
-      <View className="gap-3">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-          Export Data
-        </Text>
-        <Button
-          label="Export Workout History (CSV)"
-          variant="secondary"
-          onPress={() => exportWorkouts.mutate()}
-          loading={exportWorkouts.isPending}
-        />
-        <Button
-          label="Export Nutrition Diary (CSV)"
-          variant="secondary"
-          onPress={() => exportNutrition.mutate()}
-          loading={exportNutrition.isPending}
-        />
-        {exportWorkouts.isError || exportNutrition.isError ? (
-          <Text className="text-sm text-red-600 dark:text-red-400">
-            Couldn&apos;t export — please try again.
-          </Text>
-        ) : null}
-      </View>
+        <View className="gap-3 border-t border-border pt-6">
+          <SectionLabel>Export Data</SectionLabel>
+          <Button
+            label="Export Workout History (CSV)"
+            variant="secondary"
+            onPress={() => exportWorkouts.mutate()}
+            loading={exportWorkouts.isPending}
+          />
+          <Button
+            label="Export Nutrition Diary (CSV)"
+            variant="secondary"
+            onPress={() => exportNutrition.mutate()}
+            loading={exportNutrition.isPending}
+          />
+          {exportWorkouts.isError || exportNutrition.isError ? (
+            <ThemedText variant="body" className="text-sm text-accent">
+              Couldn&apos;t export — please try again.
+            </ThemedText>
+          ) : null}
+        </View>
 
-      <Button
-        label="Sign Out"
-        variant="secondary"
-        onPress={() => signOut.mutate(undefined, { onSuccess: () => router.replace("/sign-in") })}
-        loading={signOut.isPending}
-      />
+        <View className="gap-3 border-t border-border pt-6">
+          <Button
+            label="Sign Out"
+            variant="secondary"
+            onPress={() => signOut.mutate(undefined, { onSuccess: () => router.replace("/sign-in") })}
+            loading={signOut.isPending}
+          />
 
-      {__DEV__ ? (
-        <Button
-          label="Trigger Test Error (dev only)"
-          variant="secondary"
-          onPress={() => {
-            Sentry.captureException(new Error("Test error from Settings screen"));
-          }}
-        />
-      ) : null}
-    </ScrollView>
+          {__DEV__ ? (
+            <Button
+              label="Trigger Test Error (dev only)"
+              variant="secondary"
+              onPress={() => {
+                Sentry.captureException(new Error("Test error from Settings screen"));
+              }}
+            />
+          ) : null}
+        </View>
+      </ScrollView>
+    </View>
   );
 }

@@ -1,9 +1,10 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { useAddMealItem, useBarcodeLookup } from "@/features/nutrition/hooks";
 import type { Food } from "@/features/nutrition/types";
@@ -40,18 +41,20 @@ export default function ScanScreen() {
 
   if (!permission) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-950">
-        <Text className="text-neutral-500 dark:text-neutral-400">Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-ground">
+        <ThemedText variant="body" className="text-ink-dim">
+          Loading...
+        </ThemedText>
       </View>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View className="flex-1 items-center justify-center gap-4 bg-white px-8 dark:bg-neutral-950">
-        <Text className="text-center text-base text-neutral-700 dark:text-neutral-300">
+      <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">
+        <ThemedText variant="body" className="text-center text-base text-ink-dim">
           Camera access is needed to scan barcodes.
-        </Text>
+        </ThemedText>
         <Button label="Grant Camera Access" onPress={requestPermission} />
       </View>
     );
@@ -68,18 +71,20 @@ export default function ScanScreen() {
           onBarcodeScanned={onBarcodeScanned}
         />
       ) : (
-        <View className="flex-1 items-center justify-center gap-4 bg-white px-8 dark:bg-neutral-950">
+        <View className="flex-1 items-center justify-center gap-4 bg-ground px-8">
           {barcodeLookup.isPending ? (
-            <Text className="text-neutral-500 dark:text-neutral-400">Looking up...</Text>
+            <ThemedText variant="body" className="text-ink-dim">
+              Looking up...
+            </ThemedText>
           ) : foundFood ? (
             <>
-              <Text className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="display" className="text-xl text-ink">
                 {foundFood.name}
-              </Text>
-              <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+              </ThemedText>
+              <ThemedText variant="body" className="text-sm text-ink-dim">
                 {foundFood.calories} kcal per {foundFood.serving_size}
                 {foundFood.serving_unit}
-              </Text>
+              </ThemedText>
               <Button
                 label="Add to Diary"
                 loading={addMealItem.isPending}
@@ -94,9 +99,9 @@ export default function ScanScreen() {
             </>
           ) : (
             <>
-              <Text className="text-center text-base text-neutral-700 dark:text-neutral-300">
+              <ThemedText variant="body" className="text-center text-base text-ink-dim">
                 Couldn&apos;t find that product.
-              </Text>
+              </ThemedText>
               <Button label="Try Again" onPress={rescan} />
             </>
           )}

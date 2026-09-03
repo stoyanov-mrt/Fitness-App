@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as ImagePicker from "expo-image-picker";
 import { Controller, useForm } from "react-hook-form";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useSession } from "@/features/auth/hooks";
 import { ProgressPhotoThumbnail } from "@/features/metrics/components/ProgressPhotoThumbnail";
@@ -78,32 +79,29 @@ export default function MetricsScreen() {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-16"
-    >
-      <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-16">
+      <ThemedText variant="display" className="text-3xl text-ink">
         Body Metrics
-      </Text>
+      </ThemedText>
 
-      <View className="gap-3 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+      <View className="gap-3 border border-border bg-ground-raised p-4">
         <View className="flex-row items-baseline justify-between">
-          <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             Weight Trend
-          </Text>
+          </ThemedText>
           {latest?.weight_kg != null ? (
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+            <ThemedText variant="bodyMedium" className="text-sm text-ink">
               Latest: {latest.weight_kg} kg
-            </Text>
+            </ThemedText>
           ) : null}
         </View>
         <WeightChart metrics={metrics ?? []} />
       </View>
 
-      <View className="gap-4 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+      <View className="gap-4 border border-border bg-ground-raised p-4">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
           Log Today
-        </Text>
+        </ThemedText>
         <Controller
           control={control}
           name="weightKg"
@@ -169,9 +167,9 @@ export default function MetricsScreen() {
           </View>
         </View>
         {logMetric.isError ? (
-          <Text className="text-sm text-red-600 dark:text-red-400">
+          <ThemedText variant="body" className="text-sm text-accent">
             Couldn&apos;t save — please try again.
-          </Text>
+          </ThemedText>
         ) : null}
         <Button label="Save" onPress={onSave} loading={logMetric.isPending} />
 
@@ -183,9 +181,9 @@ export default function MetricsScreen() {
           </View>
         ) : null}
         {uploadPhoto.isError ? (
-          <Text className="text-sm text-red-600 dark:text-red-400">
+          <ThemedText variant="body" className="text-sm text-accent">
             Couldn&apos;t upload that photo — please try again.
-          </Text>
+          </ThemedText>
         ) : null}
         <Button
           label="+ Add Progress Photo"

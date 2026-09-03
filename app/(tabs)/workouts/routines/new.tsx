@@ -1,8 +1,9 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { TextField } from "@/components/TextField";
 import { useSession } from "@/features/auth/hooks";
 import { ExercisePickerSheet } from "@/features/workouts/components/ExercisePickerSheet";
@@ -40,10 +41,7 @@ export default function NewRoutineScreen() {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-6"
-    >
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-6">
       <View className="gap-4">
         <TextField
           label="Name"
@@ -62,24 +60,26 @@ export default function NewRoutineScreen() {
       </View>
 
       <View className="gap-3">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
           Exercises
-        </Text>
+        </ThemedText>
 
         {draftExercises.map((draft, index) => (
           <View
             key={`${draft.exercise.id}-${index}`}
-            className="gap-3 rounded-xl border border-neutral-200 p-3 dark:border-neutral-800"
+            className="gap-3 border border-border bg-ground-raised p-3"
           >
             <View className="flex-row items-start justify-between gap-3">
-              <Text className="flex-1 font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="bodyMedium" className="flex-1 text-ink">
                 {draft.exercise.name}
-              </Text>
+              </ThemedText>
               <Pressable
                 accessibilityRole="button"
                 onPress={() => setDraftExercises((prev) => prev.filter((_, i) => i !== index))}
               >
-                <Text className="text-sm font-medium text-red-600 dark:text-red-400">Remove</Text>
+                <ThemedText variant="label" className="text-xs text-accent">
+                  Remove
+                </ThemedText>
               </Pressable>
             </View>
             <View className="flex-row gap-3">
@@ -119,11 +119,11 @@ export default function NewRoutineScreen() {
       </View>
 
       {createRoutine.isError ? (
-        <Text className="text-sm text-red-600 dark:text-red-400">
+        <ThemedText variant="body" className="text-sm text-accent">
           {createRoutine.error instanceof Error
             ? createRoutine.error.message
             : "Couldn't save this routine"}
-        </Text>
+        </ThemedText>
       ) : null}
 
       <Button label="Save Routine" onPress={onSave} loading={createRoutine.isPending} />

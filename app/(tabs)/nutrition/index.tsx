@@ -1,7 +1,8 @@
 import { Link } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { FoodPickerSheet } from "@/features/nutrition/components/FoodPickerSheet";
 import { useDailyDiary, useDailySummary, useLatestGoal, useRemoveMealItem } from "@/features/nutrition/hooks";
@@ -44,42 +45,43 @@ export default function NutritionScreen() {
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-16"
-    >
-      <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">Nutrition</Text>
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-16">
+      <ThemedText variant="display" className="text-3xl text-ink">
+        Nutrition
+      </ThemedText>
 
-      <View className="gap-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+      <View className="gap-2 border border-border bg-ground-raised p-4">
         <View className="flex-row justify-between">
-          <Text className="text-neutral-500 dark:text-neutral-400">Calories</Text>
-          <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+          <ThemedText variant="body" className="text-ink-dim">
+            Calories
+          </ThemedText>
+          <ThemedText variant="bodyMedium" className="text-ink">
             {round(caloriesConsumed)}
             {caloriesTarget != null ? ` / ${caloriesTarget}` : ""} kcal
-          </Text>
+          </ThemedText>
         </View>
         {caloriesRemaining != null ? (
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+          <ThemedText variant="body" className="text-sm text-ink-dim">
             {caloriesRemaining >= 0
               ? `${round(caloriesRemaining)} kcal remaining`
               : `${round(-caloriesRemaining)} kcal over`}
-          </Text>
+          </ThemedText>
         ) : null}
         <View className="mt-2 flex-row justify-between">
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             P {round(summary?.total_protein_g ?? 0)}g
-          </Text>
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+          </ThemedText>
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             C {round(summary?.total_carbs_g ?? 0)}g
-          </Text>
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+          </ThemedText>
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             F {round(summary?.total_fat_g ?? 0)}g
-          </Text>
+          </ThemedText>
         </View>
       </View>
 
-      <Link href="/nutrition/scan" className="text-center text-sm font-semibold text-neutral-900 dark:text-neutral-50">
-        Scan a Barcode
+      <Link href="/nutrition/scan" className="text-center text-sm text-ink">
+        <ThemedText variant="bodyMedium">Scan a Barcode</ThemedText>
       </Link>
 
       {MEAL_TYPES.map((mealType) => {
@@ -88,41 +90,41 @@ export default function NutritionScreen() {
         return (
           <View key={mealType} className="gap-2">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="label" className="text-xs text-ink-dim">
                 {MEAL_LABELS[mealType]}
-              </Text>
+              </ThemedText>
               <Pressable accessibilityRole="button" onPress={() => setAddingMealType(mealType)}>
-                <Text className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+                <ThemedText variant="label" className="text-xs text-accent">
                   + Add
-                </Text>
+                </ThemedText>
               </Pressable>
             </View>
 
             {items.length === 0 ? (
-              <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+              <ThemedText variant="body" className="text-sm text-ink-dim">
                 Nothing logged yet.
-              </Text>
+              </ThemedText>
             ) : (
               items.map((item) => (
                 <View
                   key={item.id}
-                  className="flex-row items-center justify-between rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800"
+                  className="flex-row items-center justify-between border border-border px-3 py-2"
                 >
                   <View className="flex-1">
-                    <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+                    <ThemedText variant="bodyMedium" className="text-ink">
                       {item.food.name}
-                    </Text>
-                    <Text className="text-xs text-neutral-500 dark:text-neutral-400">
+                    </ThemedText>
+                    <ThemedText variant="body" className="text-xs text-ink-dim">
                       {item.quantity} × {round(item.food.calories)} kcal
-                    </Text>
+                    </ThemedText>
                   </View>
                   <Pressable
                     accessibilityRole="button"
                     onPress={() => removeMealItem.mutate(item.id)}
                   >
-                    <Text className="text-sm font-medium text-red-600 dark:text-red-400">
+                    <ThemedText variant="label" className="text-xs text-accent">
                       Remove
-                    </Text>
+                    </ThemedText>
                   </Pressable>
                 </View>
               ))

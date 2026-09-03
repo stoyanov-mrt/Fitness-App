@@ -1,8 +1,9 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Button } from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
 import { useSession } from "@/features/auth/hooks";
 import { ExercisePickerSheet } from "@/features/workouts/components/ExercisePickerSheet";
 import { RestTimer } from "@/features/workouts/components/RestTimer";
@@ -24,8 +25,10 @@ export default function WorkoutSessionScreen() {
 
   if (isLoading || !workout) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-950">
-        <Text className="text-neutral-500 dark:text-neutral-400">Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-ground">
+        <ThemedText variant="body" className="text-ink-dim">
+          Loading...
+        </ThemedText>
       </View>
     );
   }
@@ -36,11 +39,11 @@ export default function WorkoutSessionScreen() {
   );
 
   return (
-    <View className="flex-1 bg-white dark:bg-neutral-950">
+    <View className="flex-1 bg-ground">
       <ScrollView contentContainerClassName="gap-4 px-6 py-6">
-        <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="display" className="text-3xl text-ink">
           {workout.name}
-        </Text>
+        </ThemedText>
 
         {showRestTimer ? (
           <RestTimer
@@ -51,9 +54,9 @@ export default function WorkoutSessionScreen() {
         ) : null}
 
         {sortedExercises.length === 0 ? (
-          <Text className="text-neutral-500 dark:text-neutral-400">
+          <ThemedText variant="body" className="text-ink-dim">
             No exercises yet — add one to get started.
-          </Text>
+          </ThemedText>
         ) : null}
 
         {sortedExercises.map((we) => (

@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
+import { ThemedText } from "@/components/ThemedText";
 import { useExercise, useExerciseHistory } from "@/features/workouts/hooks";
 import { detectPersonalRecords } from "@/features/workouts/utils/prDetection";
 
@@ -18,69 +19,74 @@ export default function ExerciseDetailScreen() {
 
   if (isLoading || !exercise) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-950">
-        <Text className="text-neutral-500 dark:text-neutral-400">Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-ground">
+        <ThemedText variant="body" className="text-ink-dim">
+          Loading...
+        </ThemedText>
       </View>
     );
   }
 
   return (
-    <ScrollView
-      className="flex-1 bg-white dark:bg-neutral-950"
-      contentContainerClassName="gap-6 px-6 py-6"
-    >
+    <ScrollView className="flex-1 bg-ground" contentContainerClassName="gap-6 px-6 py-6">
       <View className="gap-1">
-        <Text className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+        <ThemedText variant="display" className="text-3xl text-ink">
           {exercise.name}
-        </Text>
-        <Text className="text-base text-neutral-500 dark:text-neutral-400">
+        </ThemedText>
+        <ThemedText variant="body" className="text-base text-ink-dim">
           {[exercise.primary_muscle, exercise.equipment, exercise.category]
             .filter(Boolean)
             .join(" · ")}
-        </Text>
+        </ThemedText>
       </View>
 
-      <View className="gap-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+      <View className="gap-2 border border-border bg-ground-raised p-4">
+        <ThemedText variant="label" className="text-xs text-ink-dim">
           Personal Records
-        </Text>
+        </ThemedText>
         {records &&
         (records.heaviestWeight || records.bestEstimatedOneRepMax || records.bestSessionVolume) ? (
           <View className="gap-1.5">
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 dark:text-neutral-400">Heaviest weight</Text>
-              <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="body" className="text-ink-dim">
+                Heaviest weight
+              </ThemedText>
+              <ThemedText variant="bodyMedium" className="text-ink">
                 {formatWeight(records.heaviestWeight?.value)}
-              </Text>
+              </ThemedText>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 dark:text-neutral-400">Best est. 1RM</Text>
-              <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="body" className="text-ink-dim">
+                Best est. 1RM
+              </ThemedText>
+              <ThemedText variant="bodyMedium" className="text-ink">
                 {formatWeight(records.bestEstimatedOneRepMax?.value)}
-              </Text>
+              </ThemedText>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-neutral-500 dark:text-neutral-400">Best session volume</Text>
-              <Text className="font-medium text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="body" className="text-ink-dim">
+                Best session volume
+              </ThemedText>
+              <ThemedText variant="bodyMedium" className="text-ink">
                 {formatWeight(records.bestSessionVolume?.value)}
-              </Text>
+              </ThemedText>
             </View>
           </View>
         ) : (
-          <Text className="text-neutral-500 dark:text-neutral-400">
+          <ThemedText variant="body" className="text-ink-dim">
             No sets logged for this exercise yet.
-          </Text>
+          </ThemedText>
         )}
       </View>
 
       {exercise.instructions ? (
         <View className="gap-2">
-          <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+          <ThemedText variant="label" className="text-xs text-ink-dim">
             Instructions
-          </Text>
-          <Text className="text-base leading-6 text-neutral-700 dark:text-neutral-300">
+          </ThemedText>
+          <ThemedText variant="body" className="text-base leading-6 text-ink-dim">
             {exercise.instructions}
-          </Text>
+          </ThemedText>
         </View>
       ) : null}
     </ScrollView>

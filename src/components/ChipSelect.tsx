@@ -1,4 +1,6 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
+
+import { ThemedText } from "@/components/ThemedText";
 
 type ChipOption<T extends string> = { value: T; label: string };
 
@@ -22,9 +24,9 @@ export function ChipSelect<T extends string>({
 }: ChipSelectProps<T>) {
   return (
     <View className="gap-1.5">
-      <Text className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <ThemedText variant="label" className="text-xs text-ink-dim">
         {label}
-      </Text>
+      </ThemedText>
       <View accessibilityRole="radiogroup" className="flex-row flex-wrap gap-2">
         {options.map((option) => {
           const selected = option.value === value;
@@ -34,26 +36,25 @@ export function ChipSelect<T extends string>({
               accessibilityRole="radio"
               accessibilityState={{ checked: selected }}
               onPress={() => onChange(option.value)}
-              className={`rounded-full border px-3.5 py-2 ${
-                selected
-                  ? "border-neutral-900 bg-neutral-900 dark:border-neutral-50 dark:bg-neutral-50"
-                  : "border-neutral-300 bg-white dark:border-neutral-700 dark:bg-neutral-900"
+              className={`border px-3.5 py-2 ${
+                selected ? "border-ink bg-ink" : "border-border bg-ground-raised"
               }`}
             >
-              <Text
-                className={`text-sm font-medium ${
-                  selected
-                    ? "text-white dark:text-neutral-900"
-                    : "text-neutral-700 dark:text-neutral-300"
-                }`}
+              <ThemedText
+                variant="bodyMedium"
+                className={`text-sm ${selected ? "text-ground" : "text-ink-dim"}`}
               >
                 {option.label}
-              </Text>
+              </ThemedText>
             </Pressable>
           );
         })}
       </View>
-      {error ? <Text className="text-sm text-red-600 dark:text-red-400">{error}</Text> : null}
+      {error ? (
+        <ThemedText variant="body" className="text-sm text-accent">
+          {error}
+        </ThemedText>
+      ) : null}
     </View>
   );
 }

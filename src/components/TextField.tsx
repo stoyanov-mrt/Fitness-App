@@ -1,4 +1,7 @@
-import { Text, TextInput, View, type TextInputProps } from "react-native";
+import { TextInput, View, type TextInputProps } from "react-native";
+
+import { ThemedText } from "@/components/ThemedText";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type TextFieldProps = TextInputProps & {
   label: string;
@@ -8,19 +11,26 @@ type TextFieldProps = TextInputProps & {
 // Shared, feature-agnostic form primitive — used by auth and onboarding
 // forms alike (see CLAUDE.md: components/ is for cross-feature UI only).
 export function TextField({ label, error, className, ...inputProps }: TextFieldProps) {
+  const { tokens } = useDesignTheme();
+
   return (
     <View className="gap-1.5">
-      <Text className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <ThemedText variant="label" className="text-xs text-ink-dim">
         {label}
-      </Text>
+      </ThemedText>
       <TextInput
-        className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50"
-        placeholderTextColor="#9ca3af"
+        className="border border-border bg-ground-raised px-3 py-2.5 text-base text-ink"
+        style={{ fontFamily: tokens.fonts.body }}
+        placeholderTextColor={tokens.swatch.inkDim}
         accessibilityLabel={label}
         accessibilityHint={error}
         {...inputProps}
       />
-      {error ? <Text className="text-sm text-red-600 dark:text-red-400">{error}</Text> : null}
+      {error ? (
+        <ThemedText variant="body" className="text-sm text-accent">
+          {error}
+        </ThemedText>
+      ) : null}
     </View>
   );
 }

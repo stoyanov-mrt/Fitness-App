@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, TextInput, View } from "react-native";
 
+import { ThemedText } from "@/components/ThemedText";
 import { useLogSet } from "@/features/workouts/hooks";
 import type { WorkoutExerciseWithSets } from "@/features/workouts/types";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type WorkoutExerciseCardProps = {
   workoutId: string;
@@ -17,6 +19,7 @@ export function WorkoutExerciseCard({
   readOnly,
   onSetLogged,
 }: WorkoutExerciseCardProps) {
+  const { tokens } = useDesignTheme();
   const logSet = useLogSet(workoutId, workoutExercise.id);
   const [weight, setWeight] = useState("");
   const [reps, setReps] = useState("");
@@ -48,48 +51,51 @@ export function WorkoutExerciseCard({
   };
 
   return (
-    <View className="gap-3 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-      <Text className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+    <View className="gap-3 border border-border bg-ground-raised p-4">
+      <ThemedText variant="bodyMedium" className="text-lg text-ink">
         {workoutExercise.exercise.name}
-      </Text>
+      </ThemedText>
 
       {sortedSets.length > 0 ? (
         <View className="gap-1.5">
           {sortedSets.map((set, index) => (
             <View key={set.id} className="flex-row items-center gap-3">
-              <Text className="w-6 text-sm text-neutral-400">{index + 1}</Text>
-              <Text className="flex-1 text-neutral-900 dark:text-neutral-50">
+              <ThemedText variant="body" className="w-6 text-sm text-ink-dim">
+                {index + 1}
+              </ThemedText>
+              <ThemedText variant="body" className="flex-1 text-ink">
                 {set.weight} kg × {set.reps} {set.is_warmup ? "(warm-up)" : ""}
-              </Text>
+              </ThemedText>
             </View>
           ))}
         </View>
       ) : (
-        <Text className="text-sm text-neutral-500 dark:text-neutral-400">No sets logged yet.</Text>
+        <ThemedText variant="body" className="text-sm text-ink-dim">
+          No sets logged yet.
+        </ThemedText>
       )}
 
       {!readOnly ? (
         <View className="flex-row items-end gap-2">
           <View className="flex-1 gap-1">
-            <Text
-              numberOfLines={1}
-              className="text-xs font-medium text-neutral-500 dark:text-neutral-400"
-            >
+            <ThemedText variant="label" numberOfLines={1} className="text-xs text-ink-dim">
               kg
-            </Text>
+            </ThemedText>
             <TextInput
-              className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50"
+              className="border border-border bg-ground px-3 py-2 text-base text-ink"
+              style={{ fontFamily: tokens.fonts.body }}
               keyboardType="numeric"
               value={weight}
               onChangeText={setWeight}
             />
           </View>
           <View className="flex-1 gap-1">
-            <Text className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <ThemedText variant="label" className="text-xs text-ink-dim">
               Reps
-            </Text>
+            </ThemedText>
             <TextInput
-              className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50"
+              className="border border-border bg-ground px-3 py-2 text-base text-ink"
+              style={{ fontFamily: tokens.fonts.body }}
               keyboardType="numeric"
               value={reps}
               onChangeText={setReps}
@@ -99,27 +105,24 @@ export function WorkoutExerciseCard({
             accessibilityRole="checkbox"
             accessibilityState={{ checked: isWarmup }}
             onPress={() => setIsWarmup((w) => !w)}
-            className={`rounded-lg border px-3 py-2.5 ${
-              isWarmup
-                ? "border-neutral-900 bg-neutral-900 dark:border-neutral-50 dark:bg-neutral-50"
-                : "border-neutral-300 dark:border-neutral-700"
-            }`}
+            className={`border px-3 py-2.5 ${isWarmup ? "border-ink bg-ink" : "border-border"}`}
           >
-            <Text
-              className={`text-xs font-medium ${
-                isWarmup ? "text-white dark:text-neutral-900" : "text-neutral-600 dark:text-neutral-400"
-              }`}
+            <ThemedText
+              variant="label"
+              className={`text-xs ${isWarmup ? "text-ground" : "text-ink-dim"}`}
             >
               Warm-up
-            </Text>
+            </ThemedText>
           </Pressable>
           <Pressable
             accessibilityRole="button"
             onPress={onLogSet}
             disabled={logSet.isPending}
-            className="rounded-lg bg-neutral-900 px-4 py-2.5 dark:bg-neutral-50"
+            className="border border-ink bg-ink px-4 py-2.5"
           >
-            <Text className="text-sm font-semibold text-white dark:text-neutral-900">Log</Text>
+            <ThemedText variant="label" className="text-sm text-ground">
+              Log
+            </ThemedText>
           </Pressable>
         </View>
       ) : null}

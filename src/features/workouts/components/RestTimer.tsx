@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
+
+import { ThemedText } from "@/components/ThemedText";
 
 type RestTimerProps = {
   durationSeconds: number;
@@ -19,12 +21,14 @@ export function RestTimer({ durationSeconds, onDismiss }: RestTimerProps) {
   }, [remaining, onDismiss]);
 
   return (
-    <View className="flex-row items-center justify-between rounded-xl bg-neutral-900 px-4 py-3 dark:bg-neutral-50">
-      <Text className="text-base font-semibold text-white dark:text-neutral-900">
+    <View className="flex-row items-center justify-between border border-accent bg-ground-raised px-4 py-3">
+      <ThemedText variant="bodyMedium" className="text-base text-accent">
         Rest: {remaining}s
-      </Text>
+      </ThemedText>
       <Pressable accessibilityRole="button" onPress={onDismiss}>
-        <Text className="text-sm font-medium text-white dark:text-neutral-900">Skip</Text>
+        <ThemedText variant="label" className="text-xs text-ink-dim">
+          Skip
+        </ThemedText>
       </Pressable>
     </View>
   );

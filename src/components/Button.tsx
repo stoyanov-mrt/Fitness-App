@@ -1,4 +1,7 @@
-import { ActivityIndicator, Pressable, Text, type PressableProps } from "react-native";
+import { ActivityIndicator, Pressable, type PressableProps } from "react-native";
+
+import { ThemedText } from "@/components/ThemedText";
+import { useDesignTheme } from "@/theme/useDesignTheme";
 
 type ButtonProps = PressableProps & {
   label: string;
@@ -13,6 +16,7 @@ export function Button({
   disabled,
   ...pressableProps
 }: ButtonProps) {
+  const { tokens } = useDesignTheme();
   const isDisabled = disabled || loading;
   const isPrimary = variant === "primary";
 
@@ -25,23 +29,20 @@ export function Button({
       accessibilityLabel={label}
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
-      className={`items-center rounded-lg px-4 py-3 ${
-        isPrimary ? "bg-neutral-900 dark:bg-neutral-50" : "bg-neutral-200 dark:bg-neutral-800"
-      } ${isDisabled ? "opacity-50" : ""}`}
+      className={`items-center justify-center border px-4 py-3 ${
+        isPrimary ? "border-ink bg-ink" : "border-border bg-ground-raised"
+      } ${isDisabled ? "opacity-40" : ""}`}
       {...pressableProps}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? "#fff" : "#111"} />
+        <ActivityIndicator color={isPrimary ? tokens.swatch.ground : tokens.swatch.ink} />
       ) : (
-        <Text
-          className={`text-base font-semibold ${
-            isPrimary
-              ? "text-white dark:text-neutral-900"
-              : "text-neutral-900 dark:text-neutral-50"
-          }`}
+        <ThemedText
+          variant="label"
+          className={`text-sm ${isPrimary ? "text-ground" : "text-ink"}`}
         >
           {label}
-        </Text>
+        </ThemedText>
       )}
     </Pressable>
   );

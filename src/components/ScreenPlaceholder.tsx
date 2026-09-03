@@ -1,4 +1,6 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import { ThemedText } from "@/components/ThemedText";
 
 type ScreenPlaceholderProps = {
   title: string;
@@ -9,13 +11,13 @@ type ScreenPlaceholderProps = {
 // feature UI phase by phase per the build roadmap.
 export function ScreenPlaceholder({ title, description }: ScreenPlaceholderProps) {
   return (
-    <View className="flex-1 items-center justify-center gap-2 bg-white px-8 dark:bg-neutral-950">
-      <Text className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+    <View className="flex-1 items-center justify-center gap-2 bg-ground px-8">
+      <ThemedText variant="displaySecondary" className="text-2xl text-ink">
         {title}
-      </Text>
-      <Text className="text-center text-base text-neutral-500 dark:text-neutral-400">
+      </ThemedText>
+      <ThemedText variant="body" className="text-center text-base text-ink-dim">
         {description}
-      </Text>
+      </ThemedText>
     </View>
   );
 }
