@@ -1,9 +1,11 @@
 import { router } from "expo-router";
-import { FlatList, Pressable, TextInput, View } from "react-native";
-
 import { useState } from "react";
+import { FlatList, Modal, Pressable, ScrollView, TextInput, View } from "react-native";
 
+import { Button } from "@/components/Button";
 import { ThemedText } from "@/components/ThemedText";
+import { useSession } from "@/features/auth/hooks";
+import { CustomExerciseForm } from "@/features/workouts/components/CustomExerciseForm";
 import { useExerciseSearch } from "@/features/workouts/hooks";
 import { useDesignTheme } from "@/theme/useDesignTheme";
 
@@ -16,8 +18,10 @@ const CATEGORIES = [
 
 export default function ExerciseLibraryScreen() {
   const { tokens } = useDesignTheme();
+  const { data: session } = useSession();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
+  const [addingCustom, setAddingCustom] = useState(false);
   const { data: exercises, isLoading } = useExerciseSearch(query, category);
 
   return (
@@ -54,6 +58,11 @@ export default function ExerciseLibraryScreen() {
             );
           })}
         </View>
+        <Button
+          label="+ Add Custom Exercise"
+          variant="secondary"
+          onPress={() => setAddingCustom(true)}
+        />
       </View>
 
       {isLoading ? (
@@ -86,6 +95,31 @@ export default function ExerciseLibraryScreen() {
           )}
         />
       )}
+
+      <Modal visible={addingCustom} animationType="slide" onRequestClose={() => setAddingCustom(false)}>
+        <View className="flex-1 bg-ground pt-16">
+          <View className="flex-row items-center justify-between px-4 pb-3">
+            <ThemedText variant="display" className="text-xl text-ink">
+              Add Custom Exercise
+            </ThemedText>
+            <Pressable accessibilityRole="button" onPress={() => setAddingCustom(false)}>
+              <ThemedText variant="bodyMedium" className="text-base text-ink-dim">
+                Close
+              </ThemedText>
+            </Pressable>
+          </View>
+          <ScrollView contentContainerClassName="gap-4 px-4 pb-8">
+            <CustomExerciseForm
+              userId={session?.user.id}
+              onSaved={(exercise) => {
+                setAddingCustom(false);
+                router.push(`/workouts/exercises/${exercise.id}`);
+              }}
+              onCancel={() => setAddingCustom(false)}
+            />
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 }
