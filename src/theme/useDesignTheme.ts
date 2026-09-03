@@ -1,4 +1,4 @@
-import { useDesignThemeStore } from "@/stores/designThemeStore";
+import { useDesignThemeHydrated, useDesignThemeStore } from "@/stores/designThemeStore";
 
 import { designThemes } from "./designTokens";
 
@@ -7,5 +7,6 @@ import { designThemes } from "./designTokens";
 export function useDesignTheme() {
   const theme = useDesignThemeStore((state) => state.theme);
   const setTheme = useDesignThemeStore((state) => state.setTheme);
-  return { theme, tokens: designThemes[theme], setTheme };
+  const hasHydrated = useDesignThemeHydrated((state) => state.hasHydrated);
+  return { theme, tokens: designThemes[theme], setTheme, hasHydrated };
 }

@@ -12,7 +12,7 @@ import { useAuthSessionSync } from "@/features/auth/hooks";
 import { useProtectedRoute } from "@/lib/navigation";
 import { useSyncNetworkStatus } from "@/lib/network";
 import { asyncStoragePersister, queryClient } from "@/lib/queryClient";
-import { Sentry } from "@/lib/sentry";
+import { Sentry, sentryEnabled } from "@/lib/sentry";
 import { useSyncNativeWindTheme } from "@/lib/theme";
 import { designThemeFontAssets } from "@/theme/designTokens";
 import { useDesignTheme } from "@/theme/useDesignTheme";
@@ -45,12 +45,17 @@ function RootLayout() {
   // theme is then just re-pointing which family names get used, no
   // re-fetch/re-mount. See src/theme/designTokens.ts.
   const [fontsLoaded] = useFonts(designThemeFontAssets);
-  const { theme, tokens } = useDesignTheme();
+  const { theme, tokens, hasHydrated } = useDesignTheme();
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !hasHydrated) {
     // Not yet inside the vars() wrapper below, so bg-ground has no CSS
     // variable to resolve against here — set the ground color directly to
     // avoid a white flash before Dither Mono's near-black ground appears.
+    // Waiting on hasHydrated too (not just fonts) matters on native: this
+    // branch must be the ONLY thing that renders until AsyncStorage
+    // rehydration finishes, so the vars()-wrapped View below never applies
+    // CSS variables for the first time on a later render — see
+    // designThemeStore.ts for why that specifically crashes on native.
     return (
       <View
         style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: tokens.swatch.ground }}
@@ -79,6 +84,8 @@ function RootLayout() {
   );
 }
 
-// A safe no-op when EXPO_PUBLIC_SENTRY_DSN isn't set (see lib/sentry.ts) —
-// adds a top-level error boundary + navigation instrumentation once it is.
-export default Sentry.wrap(RootLayout);
+// Sentry.wrap() is NOT a safe no-op without a DSN — on native it mounts a
+// profiler that expects a navigation context to already exist, which
+// crashes the app before <Stack> ever mounts (see lib/sentry.ts). Skip
+// wrapping entirely until EXPO_PUBLIC_SENTRY_DSN is actually set.
+export default sentryEnabled ? Sentry.wrap(RootLayout) : RootLayout;
